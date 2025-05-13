@@ -1,6 +1,5 @@
 package oridungjeol.duckhang.pay;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -9,8 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.io.*;
@@ -18,14 +16,29 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.UUID;
 
 @Slf4j
-@Controller
+@CrossOrigin(origins = "http://localhost:3000")
+@RestController
 public class WidgetController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @RequestMapping(value = "/confirm")
+    //주문 ID 생성 API
+    @PostMapping(value = "/create-order-id")
+    public ResponseEntity<JSONObject> createOrderId(){
+        String orderId = UUID.randomUUID().toString();
+        JSONObject obj = new JSONObject();
+        obj.put("orderId", orderId);
+
+        logger.info("Generated orderId: {}", orderId);
+
+        return ResponseEntity.ok(obj);
+    }
+
+    // 결제 확인 API
+    @PostMapping(value = "/confirm")
     public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
 
         JSONParser parser = new JSONParser();
@@ -41,7 +54,7 @@ public class WidgetController {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-        ;
+
         JSONObject obj = new JSONObject();
         obj.put("orderId", orderId);
         obj.put("amount", amount);
@@ -53,6 +66,7 @@ public class WidgetController {
         Base64.Encoder encoder = Base64.getEncoder();
         byte[] encodedBytes = encoder.encode((widgetSecretKey + ":").getBytes(StandardCharsets.UTF_8));
         String authorizations = "Basic " + new String(encodedBytes);
+        log.info("Authorization: {}", authorizations);
 
         // 결제를 승인하면 결제수단에서 금액이 차감돼요.
         URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
@@ -63,7 +77,8 @@ public class WidgetController {
         connection.setDoOutput(true);
 
         OutputStream outputStream = connection.getOutputStream();
-        outputStream.write(obj.toString().getBytes("UTF-8"));
+        outputStream.write(obj.toString().getBytes(StandardCharsets.UTF_8));
+        outputStream.flush();
 
         int code = connection.getResponseCode();
         boolean isSuccess = code == 200;
@@ -74,6 +89,8 @@ public class WidgetController {
         Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
         responseStream.close();
+
+        log.info("Toss 응답 JSON: {}", jsonObject.toJSONString());
 
         return ResponseEntity.status(code).body(jsonObject);
 
