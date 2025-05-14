@@ -26,6 +26,9 @@ public class Payment {
 
     // 주문 ID 생성
     public static String generateOrderId() {
-        return java.util.UUID.randomUUID().toString();
+        String timestamp = new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").format(new java.util.Date());
+        int random = (int)(Math.random() * 10000);
+        return timestamp + String.format("%04d", random);
     }
+
 }
