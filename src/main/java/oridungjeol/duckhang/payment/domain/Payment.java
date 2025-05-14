@@ -1,15 +1,9 @@
 package oridungjeol.duckhang.payment.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
-
-@NoArgsConstructor
-@Getter
+@Data
 public class Payment {
-
     private String orderId;
     private String paymentKey;
     private int amount;

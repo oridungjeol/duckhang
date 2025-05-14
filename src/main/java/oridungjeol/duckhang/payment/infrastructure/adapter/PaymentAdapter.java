@@ -1,7 +1,6 @@
 package oridungjeol.duckhang.payment.infrastructure.adapter;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.payment.application.PaymentRepository;
 import oridungjeol.duckhang.payment.infrastructure.jparepository.PaymentJpaRepository;

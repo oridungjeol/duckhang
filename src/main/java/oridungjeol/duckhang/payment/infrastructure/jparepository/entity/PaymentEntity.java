@@ -4,14 +4,15 @@ package oridungjeol.duckhang.payment.infrastructure.jparepository.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Table(name = "payment")
 @Entity
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class PaymentEntity {
 
     @Id
