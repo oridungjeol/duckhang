@@ -1,5 +1,8 @@
 package oridungjeol.duckhang.payment.domain;
 
+import lombok.Getter;
+
+@Getter
 public class Payment {
 
     private String orderId;
@@ -11,24 +14,4 @@ public class Payment {
         this.paymentKey = paymentKey;
         this.amount = amount;
     }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public String getPaymentKey() {
-        return paymentKey;
-    }
-
-    public String getAmount() {
-        return amount;
-    }
-
-    // 주문 ID 생성
-    public static String generateOrderId() {
-        String timestamp = new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS").format(new java.util.Date());
-        int random = (int)(Math.random() * 10000);
-        return timestamp + String.format("%04d", random);
-    }
-
 }

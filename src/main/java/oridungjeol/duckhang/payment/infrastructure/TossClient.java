@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import oridungjeol.duckhang.payment.common.PaymentConfig;
 import oridungjeol.duckhang.payment.domain.Payment;
+import oridungjeol.duckhang.payment.presentation.dto.PaymentRequestDto;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -26,11 +27,11 @@ public class TossClient {
     }
 
     // 결제 확인 요청
-    public JSONObject confirmPayment(Payment payment) throws IOException, ParseException {
+    public JSONObject confirmPayment(PaymentRequestDto paymentDto) throws IOException, ParseException {
         JSONObject obj = new JSONObject();
-        obj.put("orderId", payment.getOrderId());
-        obj.put("amount", payment.getAmount());
-        obj.put("paymentKey", payment.getPaymentKey());
+        obj.put("orderId", paymentDto.getOrderId());
+        obj.put("amount", paymentDto.getAmount());
+        obj.put("paymentKey", paymentDto.getPaymentKey());
 
         String authorizationHeader = createAuthorizationHeader(paymentConfig.getSecretKey());
         return sendPaymentConfirmationRequest(obj, authorizationHeader);

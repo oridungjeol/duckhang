@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import oridungjeol.duckhang.payment.application.PaymentService;
+import oridungjeol.duckhang.payment.presentation.dto.PaymentRequestDto;
 
 @Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
@@ -27,9 +28,9 @@ public class WidgetController {
         return ResponseEntity.ok(obj);
     }
 
-    @PostMapping(value = "/confirm")
-    public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
-        JSONObject response = paymentService.confirmPayment(jsonBody);
-        return ResponseEntity.status(200).body(response);
+    @PostMapping("/confirm")
+    public ResponseEntity<JSONObject> confirm(@RequestBody PaymentRequestDto dto) throws Exception {
+        JSONObject result = paymentService.confirmPayment(dto);
+        return ResponseEntity.ok(result);
     }
 }
