@@ -10,6 +10,6 @@ import lombok.Setter;
 public class LatLng {
     private double latitude;
     private double longitude;
-    private String userId;
-    private long roomId;
+    private String user_id;
+    private long room_id;
 }
