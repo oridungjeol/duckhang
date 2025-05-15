@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import oridungjeol.duckhang.auth.infrastructure.repository.AuthJpaRepository;
 import oridungjeol.duckhang.security.oauth2.KakaoApiClient;
 import oridungjeol.duckhang.user.application.service.UserService;
+import oridungjeol.duckhang.user.presentation.dto.ProfileResponse;
 
 import java.util.UUID;
 
@@ -16,6 +17,10 @@ public class UserUseCase {
     private final UserService userService;
     private final KakaoApiClient kakaoApiClient;
     private final AuthJpaRepository authJpaRepository;
+
+    public ProfileResponse getProfile(String uuid) {
+        return userService.getProfile(UUID.fromString(uuid));
+    }
 
     /**
      * 주어진 사용자 ID에 해당하는 사용자를 탈퇴처리합니다.

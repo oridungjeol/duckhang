@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import oridungjeol.duckhang.auth.infrastructure.repository.AuthJpaRepository;
+import oridungjeol.duckhang.user.domain.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
+import oridungjeol.duckhang.user.presentation.dto.ProfileResponse;
+import oridungjeol.duckhang.user.support.UserConverter;
 
 import java.util.UUID;
 
@@ -14,6 +17,15 @@ public class UserService {
 
     private final UserJpaRepository userJpaRepository;
     private final AuthJpaRepository authJpaRepository;
+
+    public ProfileResponse getProfile(UUID uuid) {
+        User user = UserConverter.toDomain(userJpaRepository.findByUuid(uuid).get());
+        return ProfileResponse.builder()
+                .uuid(uuid.toString())
+                .nickname(user.getNickname())
+                .scope(user.getScope())
+                .build();
+    }
 
     /**
      * 주어진 UUID를 가진 사용자의 계정 정보를 영구적으로 삭제합니다.

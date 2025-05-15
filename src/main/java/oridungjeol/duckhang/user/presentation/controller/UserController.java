@@ -20,7 +20,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ProfileResponse profile(@PathVariable String userId) {
-        return null;
+        return userUseCase.getProfile(userId);
     }
 
     @DeleteMapping()
