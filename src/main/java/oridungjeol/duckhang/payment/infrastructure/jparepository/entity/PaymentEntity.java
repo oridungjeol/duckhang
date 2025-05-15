@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import oridungjeol.duckhang.board.RentalEntity;
 
 @Table(name = "payment")
 @Entity
@@ -15,17 +14,26 @@ public class PaymentEntity {
 
     @Id
     private String orderId;
+
     private String paymentKey;
+
     private int amount;
 
-    @OneToOne
-    @JoinColumn(name = "board_id")  // payment 테이블의 board_id 컬럼이 외래키
-    private RentalEntity rental;
+    private int boardId;
 
-    public PaymentEntity(String orderId, String paymentKey, int amount, RentalEntity rental) {
+    private String type; // SELL, PURCHASE, DELEGATE, RENTAL 등
+
+    private String status; // PENDING, PAID 등
+
+    @Column(name = "paid_at")
+    private java.time.LocalDateTime paidAt;
+
+    public PaymentEntity(String orderId, String paymentKey, int amount, int boardId, String type) {
         this.orderId = orderId;
         this.paymentKey = paymentKey;
         this.amount = amount;
-        this.rental = rental;
+        this.boardId = boardId;
+        this.type = type;
+        this.status = "PENDING";
     }
 }

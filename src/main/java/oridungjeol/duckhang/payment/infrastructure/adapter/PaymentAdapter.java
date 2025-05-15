@@ -6,6 +6,8 @@ import oridungjeol.duckhang.payment.application.PaymentRepository;
 import oridungjeol.duckhang.payment.infrastructure.jparepository.PaymentJpaRepository;
 import oridungjeol.duckhang.payment.infrastructure.jparepository.entity.PaymentEntity;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class PaymentAdapter implements PaymentRepository {
@@ -14,5 +16,10 @@ public class PaymentAdapter implements PaymentRepository {
     @Override
     public void save(PaymentEntity paymentEntity) {
         paymentJpaRepository.save(paymentEntity);
+    }
+
+    @Override
+    public Optional<PaymentEntity> findByOrderId(String orderId) {
+        return paymentJpaRepository.findById(orderId);
     }
 }

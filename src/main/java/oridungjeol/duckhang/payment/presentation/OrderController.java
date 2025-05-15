@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/order")
+@RequestMapping("/api/payment")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class OrderController {
@@ -21,12 +21,14 @@ public class OrderController {
     @PostMapping("/create-order-id")
     public ResponseEntity<JSONObject> createOrderId(@RequestBody Map<String, Object> request) {
         int boardId = Integer.parseInt(request.get("boardId").toString());
-        String orderId = paymentService.createOrderId(boardId);
+        String type = request.get("type").toString();
+
+        String orderId = paymentService.createOrderId(boardId, type);
 
         JSONObject obj = new JSONObject();
         obj.put("orderId", orderId);
 
-        log.info(orderId);
+        log.info("OrderId 생성: {}", orderId);
 
         return ResponseEntity.ok(obj);
     }

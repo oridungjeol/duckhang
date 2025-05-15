@@ -7,4 +7,6 @@ public class PaymentRequestDto {
     private String orderId;
     private String paymentKey;
     private int amount;
+    private int boardId;
+    private String type;
 }

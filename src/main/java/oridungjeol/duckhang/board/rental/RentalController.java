@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board;
+package oridungjeol.duckhang.board.rental;
 
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class RentalController {
     @GetMapping("/{boardId}")
     public ResponseEntity<RentalEntity> getRental(@PathVariable int boardId) {
         RentalEntity rental = rentalRepository.findById(boardId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "렌탈 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 boarId에 해당하는 게시글이 없습니다."));
         return ResponseEntity.ok(rental);
     }
 }

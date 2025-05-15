@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board;
+package oridungjeol.duckhang.board.rental;
 
 import jakarta.persistence.*;
 import lombok.Getter;
