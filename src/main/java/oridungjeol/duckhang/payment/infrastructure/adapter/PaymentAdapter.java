@@ -15,5 +15,4 @@ public class PaymentAdapter implements PaymentRepository {
     public void save(PaymentEntity paymentEntity) {
         paymentJpaRepository.save(paymentEntity);
     }
-
 }
