@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import oridungjeol.duckhang.payment.common.PaymentConfig;
-import oridungjeol.duckhang.payment.domain.Payment;
 import oridungjeol.duckhang.payment.presentation.dto.PaymentRequestDto;
 
 import java.io.*;

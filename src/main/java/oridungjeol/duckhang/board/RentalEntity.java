@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @Table(name = "rental")
 public class RentalEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id")
     private int boardId;
 
