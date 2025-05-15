@@ -7,5 +7,4 @@ public class PaymentRequestDto {
     private String orderId;
     private String paymentKey;
     private int amount;
-
 }

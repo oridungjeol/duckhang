@@ -1,8 +1,10 @@
 package oridungjeol.duckhang.payment.application;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
+import oridungjeol.duckhang.board.RentalEntity;
 import oridungjeol.duckhang.payment.domain.Payment;
 import oridungjeol.duckhang.payment.infrastructure.TossClient;
 import oridungjeol.duckhang.payment.infrastructure.jparepository.entity.PaymentEntity;
@@ -12,14 +14,11 @@ import oridungjeol.duckhang.payment.support.PaymentMapper;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PaymentService {
 
     private final TossClient tossClient;
     private final PaymentRepository paymentRepository;
-    public PaymentService(TossClient tossClient, PaymentRepository paymentRepository) {
-        this.tossClient = tossClient;
-        this.paymentRepository = paymentRepository;
-    }
 
     // 주문 ID 생성
     public String createOrderId() {
@@ -43,4 +42,5 @@ public class PaymentService {
 
         return tossResponse;
     }
+
 }

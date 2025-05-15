@@ -11,9 +11,9 @@ import oridungjeol.duckhang.payment.infrastructure.jparepository.entity.PaymentE
 public class PaymentAdapter implements PaymentRepository {
     private final PaymentJpaRepository paymentJpaRepository;
 
-
     @Override
     public void save(PaymentEntity paymentEntity) {
         paymentJpaRepository.save(paymentEntity);
     }
+
 }

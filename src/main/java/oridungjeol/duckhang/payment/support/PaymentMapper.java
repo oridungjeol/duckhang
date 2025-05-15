@@ -12,4 +12,12 @@ public class PaymentMapper {
         entity.setAmount(payment.getAmount());
         return entity;
     }
+
+    public static Payment toDomain(PaymentEntity entity) {
+        return new Payment(
+                entity.getOrderId(),
+                entity.getPaymentKey(),
+                entity.getAmount()
+        );
+    }
 }

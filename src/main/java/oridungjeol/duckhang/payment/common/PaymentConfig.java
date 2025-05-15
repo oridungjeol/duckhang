@@ -1,8 +1,10 @@
 package oridungjeol.duckhang.payment.common;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+@Getter
 @Configuration
 public class PaymentConfig {
 
@@ -15,15 +17,4 @@ public class PaymentConfig {
     @Value("${payment.confirm-endpoint}")
     private String confirmEndpoint;
 
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public String getConfirmEndpoint() {
-        return confirmEndpoint;
-    }
 }
