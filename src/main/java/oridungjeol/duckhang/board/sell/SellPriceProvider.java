@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board.rental.sell;
+package oridungjeol.duckhang.board.sell;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

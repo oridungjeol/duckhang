@@ -14,4 +14,14 @@ public class PaymentMapper {
                 payment.getType()
         );
     }
+
+    public static Payment toDomain(PaymentEntity entity) {
+        return new Payment(
+                entity.getOrderId(),
+                entity.getPaymentKey(),
+                entity.getAmount(),
+                entity.getBoardId(),
+                entity.getType()
+        );
+    }
 }

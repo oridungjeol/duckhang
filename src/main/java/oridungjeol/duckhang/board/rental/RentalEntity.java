@@ -13,6 +13,8 @@ import java.time.LocalDate;
 public class RentalEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @Column(name = "board_id")
     private int boardId;
 

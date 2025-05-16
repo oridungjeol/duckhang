@@ -1,22 +1,15 @@
 package oridungjeol.duckhang.payment.domain;
 
-import lombok.Data;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
 public class Payment {
 
-    private final String orderId;
-    private final String paymentKey;
-    private final int amount;
-    private final int boardId;
-    private final String type;
-
-    public Payment(String orderId, String paymentKey, int amount, int boardId, String type) {
-        this.orderId = orderId;
-        this.paymentKey = paymentKey;
-        this.amount = amount;
-        this.boardId = boardId;
-        this.type = type;
-    }
+    private final String orderId;     // 주문 고유 ID
+    private final String paymentKey;  // 결제 키
+    private final int amount;         // 결제 금액
+    private final int boardId;        // 게시글의 board_id (외래키)
+    private final String type;        // 게시글 타입 (SELL, RENTAL 등)
 }

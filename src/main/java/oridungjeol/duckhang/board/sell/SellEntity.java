@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board.rental.sell;
+package oridungjeol.duckhang.board.sell;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,13 +13,11 @@ import java.time.LocalDate;
 public class SellEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @Column(name = "board_id")
     private int boardId;
 
     private int price;
-
-    private int deposit;
-
-    private LocalDate period;
 
 }
