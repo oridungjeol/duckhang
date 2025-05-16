@@ -15,7 +15,7 @@ public class ChatService {
 
     public String sendMessage(Chat message) {
         String destination = "/topic/chat/" + message.getRoom_id();
-        log.info("{}", message.getRoom_id());
+        log.info(message.getContent());
         simpMessagingTemplate.convertAndSend(destination, message);
         return destination;
     }
