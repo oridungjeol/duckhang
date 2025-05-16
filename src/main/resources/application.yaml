@@ -1,7 +1,8 @@
 payment:
-  secret-key: test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6
+  secret-key: ${PAYMENT_SECRET_KEY}
   base-url: https://api.tosspayments.com/v1/payments
   confirm-endpoint: /confirm
+  cancel-endpoint: /{paymentKey}/cancel
 
 spring:
   application:

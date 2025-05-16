@@ -17,4 +17,7 @@ public class PaymentConfig {
     @Value("${payment.confirm-endpoint}")
     private String confirmEndpoint;
 
+    @Value("${payment.cancel-endpoint}")
+    private String cancelEndpoint;
+
 }
