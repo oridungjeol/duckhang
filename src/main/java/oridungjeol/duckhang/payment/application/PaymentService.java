@@ -6,10 +6,12 @@ import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.board.rental.RentalRepository;
 
+import oridungjeol.duckhang.board.rental.sell.SellRepository;
 import oridungjeol.duckhang.payment.infrastructure.TossClient;
 import oridungjeol.duckhang.payment.infrastructure.adapter.PaymentAdapter;
 import oridungjeol.duckhang.payment.infrastructure.jparepository.entity.PaymentEntity;
 import oridungjeol.duckhang.payment.presentation.dto.PaymentRequestDto;
+import oridungjeol.duckhang.payment.support.OrderIdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,7 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentService {
 
-//    private final SellRepository sellRepository;
+    private final SellRepository sellRepository;
 //    private final PurchaseRepository purchaseRepository;
 //    private final DelegateRepository delegateRepository;
     private final RentalRepository rentalRepository;
@@ -32,7 +34,7 @@ public class PaymentService {
      */
     public String createOrderId(int boardId, String type) {
         int price = getPriceByTypeAndBoardId(type, boardId);
-        String orderId = UUID.randomUUID().toString();
+        String orderId = OrderIdGenerator.generateOrderId();
 
         PaymentEntity payment = new PaymentEntity();
         payment.setOrderId(orderId);
@@ -83,18 +85,20 @@ public class PaymentService {
      */
     private int getPriceByTypeAndBoardId(String type, int boardId) {
         return switch (type.toUpperCase()) {
-//            case "SELL" -> sellRepository.findById(boardId)
-//                    .orElseThrow(() -> new IllegalArgumentException("SELL 게시글이 없습니다."))
-//                    .getPrice();
+            case "SELL" -> sellRepository.findById(boardId)
+                    .orElseThrow(() -> new IllegalArgumentException("[판매] 게시글이 없습니다."))
+                    .getPrice();
 //            case "PURCHASE" -> purchaseRepository.findById(boardId)
-//                    .orElseThrow(() -> new IllegalArgumentException("PURCHASE 게시글이 없습니다."))
+//                    .orElseThrow(() -> new IllegalArgumentException("[구매] 게시글이 없습니다."))
 //                    .getPrice();
 //            case "DELEGATE" -> delegateRepository.findById(boardId)
-//                    .orElseThrow(() -> new IllegalArgumentException("DELEGATE 게시글이 없습니다."))
+//                    .orElseThrow(() -> new IllegalArgumentException("[대리] 게시글이 없습니다."))
 //                    .getPrice();
-            case "RENTAL" -> rentalRepository.findById(boardId)
-                    .orElseThrow(() -> new IllegalArgumentException("RENTAL 게시글이 없습니다."))
-                    .getPrice();
+            case "RENTAL" -> {
+                var rental = rentalRepository.findById(boardId)
+                        .orElseThrow(() -> new IllegalArgumentException("[대여] 게시글이 없습니다."));
+                yield rental.getPrice() + rental.getDeposit();
+            }
             default -> throw new IllegalArgumentException("지원하지 않는 결제 타입입니다.");
         };
     }

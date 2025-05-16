@@ -17,8 +17,8 @@ public class RentalPriceProvider implements PriceProvider {
 
     @Override
     public int getPrice(int boardId) {
-        return rentalRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("렌탈 글이 없습니다."))
-                .getPrice();
+        var rental = rentalRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("[대여] 게시글이 없습니다."));
+        return rental.getPrice() + rental.getDeposit();
     }
 }

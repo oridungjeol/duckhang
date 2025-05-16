@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Table(name = "payment")
 @Entity
 @NoArgsConstructor
@@ -26,7 +28,7 @@ public class PaymentEntity {
     private String status; // PENDING, PAID 등
 
     @Column(name = "paid_at")
-    private java.time.LocalDateTime paidAt;
+    private LocalDateTime paidAt;
 
     public PaymentEntity(String orderId, String paymentKey, int amount, int boardId, String type) {
         this.orderId = orderId;
