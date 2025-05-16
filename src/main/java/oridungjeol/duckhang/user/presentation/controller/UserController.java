@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import oridungjeol.duckhang.user.application.usecase.UserUseCase;
+import oridungjeol.duckhang.user.presentation.dto.UpdatePrivacyRequest;
 import oridungjeol.duckhang.user.presentation.dto.UpdateProfileRequest;
 import oridungjeol.duckhang.user.presentation.dto.ProfileResponse;
 
@@ -34,6 +35,15 @@ public class UserController {
             @RequestBody UpdateProfileRequest profileRequest
             ) {
         userUseCase.updateProfile(userId, profileRequest);
+    }
+
+    @PatchMapping("/privacy")
+    @PreAuthorize("#uuid == authentication.principal.name")
+    public void updatePrivacy(
+            @AuthenticationPrincipal String uuid,
+            @RequestBody UpdatePrivacyRequest updatePrivacyRequest
+    ) {
+        userUseCase.updatePrivacy(uuid, updatePrivacyRequest);
     }
 
     @DeleteMapping()

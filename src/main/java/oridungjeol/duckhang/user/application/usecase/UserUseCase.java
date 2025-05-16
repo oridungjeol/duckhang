@@ -6,11 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import oridungjeol.duckhang.auth.infrastructure.repository.AuthJpaRepository;
 import oridungjeol.duckhang.security.oauth2.KakaoApiClient;
 import oridungjeol.duckhang.user.application.service.UserService;
-import oridungjeol.duckhang.user.domain.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
-import oridungjeol.duckhang.user.presentation.dto.UpdateProfileRequest;
 import oridungjeol.duckhang.user.presentation.dto.ProfileResponse;
-import oridungjeol.duckhang.user.support.UserConverter;
+import oridungjeol.duckhang.user.presentation.dto.UpdatePrivacyRequest;
+import oridungjeol.duckhang.user.presentation.dto.UpdateProfileRequest;
 
 import java.util.UUID;
 
@@ -33,13 +32,26 @@ public class UserUseCase {
      * <p>
      * 요청한 프로필을 가진 사람의 프로필을 수정합니다.
      *
-     * @param userId 수정할 사용자의 UUID 문자열
+     * @param userId               수정할 사용자의 UUID 문자열
      * @param updateProfileRequest 수정할 프로필 정보의 dto
-     * @return ProfileResponse 수정된 프로필 내용
      */
-    public void updateProfile(String userId, UpdateProfileRequest request) {
+    public void updateProfile(String userId, UpdateProfileRequest updateProfileRequest) {
         UUID uuid = UUID.fromString(userId);
-        userService.updateProfile(uuid, request);
+        userService.updateProfile(uuid, updateProfileRequest);
+    }
+
+    /**
+     * 개인정보를 수정합니다.
+     *
+     * <p>
+     * 요청한 사용자의 개인정보를 수정합니다.
+     *
+     * @param userId 수정할 사용자의 UUID 문자열
+     * @param updatePrivacyRequest 수정된 개인정보 내용
+     */
+    public void updatePrivacy(String userId, UpdatePrivacyRequest updatePrivacyRequest) {
+        UUID uuid = UUID.fromString(userId);
+        userService.updatePrivacy(uuid, updatePrivacyRequest);
     }
 
     /**
