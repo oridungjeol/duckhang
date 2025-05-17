@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.chatting.application.domain;
+package oridungjeol.duckhang.chat.application.domain;
 
 public enum MessageType {
     SYSTEM,

@@ -1,11 +1,11 @@
-package oridungjeol.duckhang.chatting.presentation.controller;
+package oridungjeol.duckhang.chat.presentation.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
-import oridungjeol.duckhang.chatting.application.dto.Chat;
-import oridungjeol.duckhang.chatting.application.service.ChatService;
+import oridungjeol.duckhang.chat.application.dto.Chat;
+import oridungjeol.duckhang.chat.application.service.ChatService;
 
 @RequiredArgsConstructor
 @Controller
