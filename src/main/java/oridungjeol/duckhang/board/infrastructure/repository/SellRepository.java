@@ -1,6 +1,7 @@
-package oridungjeol.duckhang.board.sell;
+package oridungjeol.duckhang.board.infrastructure.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import oridungjeol.duckhang.board.infrastructure.entity.SellEntity;
 
 import java.util.Optional;
 

@@ -2,7 +2,6 @@ payment:
   secret-key: ${PAYMENT_SECRET_KEY}
   base-url: https://api.tosspayments.com/v1/payments
   confirm-endpoint: /confirm
-  cancel-endpoint: /{paymentKey}/cancel
 
 spring:
   application:

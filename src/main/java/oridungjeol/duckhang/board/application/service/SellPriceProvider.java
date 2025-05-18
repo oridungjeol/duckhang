@@ -1,7 +1,8 @@
-package oridungjeol.duckhang.board.sell;
+package oridungjeol.duckhang.board.application.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import oridungjeol.duckhang.board.infrastructure.repository.SellRepository;
 import oridungjeol.duckhang.payment.domain.PriceProvider;
 
 @Component
@@ -17,7 +18,7 @@ public class SellPriceProvider implements PriceProvider {
 
     @Override
     public int getPrice(int boardId) {
-        return sellRepository.findById(boardId)
+        return sellRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("[판매] 게시글이 없습니다."))
                 .getPrice();
     }

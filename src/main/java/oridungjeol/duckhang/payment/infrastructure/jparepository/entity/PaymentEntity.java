@@ -35,7 +35,13 @@ public class PaymentEntity {
     private LocalDateTime paidAt;
 
     @Column(name = "board_id")
-    private Integer boardId;  // 연관관계 없이 단순 숫자 필드
+    private Integer boardId;
+
+    @Column(name = "refunded_at")
+    private LocalDateTime refundedAt;
+
+    private boolean partiallyRefunded = false;
+
 
     public PaymentEntity(String orderId, String paymentKey, int amount, int boardId, String type) {
     }

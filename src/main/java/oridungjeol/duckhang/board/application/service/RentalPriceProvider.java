@@ -1,7 +1,8 @@
-package oridungjeol.duckhang.board.rental;
+package oridungjeol.duckhang.board.application.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import oridungjeol.duckhang.board.infrastructure.repository.RentalRepository;
 import oridungjeol.duckhang.payment.domain.PriceProvider;
 
 @Component
@@ -17,7 +18,7 @@ public class RentalPriceProvider implements PriceProvider {
 
     @Override
     public int getPrice(int boardId) {
-        var rental = rentalRepository.findById(boardId)
+        var rental = rentalRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("[대여] 게시글이 없습니다."));
         return rental.getPrice() + rental.getDeposit();
     }
