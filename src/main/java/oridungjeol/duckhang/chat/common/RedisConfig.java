@@ -5,10 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
 
+/**
+ * redis 관련 bean 등록
+ */
 @Configuration
 public class RedisConfig {
     @Bean
@@ -17,14 +18,23 @@ public class RedisConfig {
         return lettuceConnectionFactory;
     }
 
+    /**
+     * private final RedisTemplate<String, String> redisTemplate; 로 자동주입 됩니다.
+     * @return
+     */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        final RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
+    public RedisTemplate<String, String> redisTemplate() {
+        final RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
 
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+        redisTemplate.setKeySerializer(stringRedisSerializer);
+        redisTemplate.setValueSerializer(stringRedisSerializer);
+        redisTemplate.setHashKeySerializer(stringRedisSerializer);
+        redisTemplate.setHashValueSerializer(stringRedisSerializer);
+        redisTemplate.setDefaultSerializer(stringRedisSerializer);
+
+        redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
 }
