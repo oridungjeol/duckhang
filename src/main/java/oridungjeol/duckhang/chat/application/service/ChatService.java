@@ -29,22 +29,32 @@ public class ChatService {
 
     /**
      * Redis producer 코드
-     * 채팅 데이터 insert
-     * mysql, redis에 저장
+     * mysql에 채팅 데이터 insert
+     * db 저장 -> redis 저장 -> websocket broadcast
      */
-    public String sendMessage(Chat message) {
-        String destination = "/topic/chat/" + message.getRoom_id();
-        simpMessagingTemplate.convertAndSend(destination, message);
-
+    public void sendMessage(Chat message) throws Exception {
+        ChatEntity chatEntity;
         try {
-            ChatEntity chatEntity = message.toEntity();
+            chatEntity = message.toEntity();
             chatRepository.save(chatEntity);
-            redisChatProducer.saveInRedis(redisTemplate, chatEntity);
         } catch (Exception e) {
-            log.error("메시지 저장 중 오류 발생");
+            log.error("메시지 DB에 저장 중 오류 발생");
+            throw new Exception(e);
         }
 
-        return destination;
+        try {
+            redisChatProducer.saveInRedis(redisTemplate, chatEntity);
+        } catch (Exception e) {
+            log.error("메시지 Redis에 저장 중 오류 발생");
+            throw new Exception(e);
+        }
+
+        try {
+            String destination = "/topic/chat/" + message.getRoom_id();
+            simpMessagingTemplate.convertAndSend(destination, message);
+        } catch (Exception e) {
+            log.error("메시지 broadcast 중 오류 발생");
+        }
     }
 
 }
