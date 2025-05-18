@@ -2,6 +2,7 @@ package oridungjeol.duckhang.chat.application.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import oridungjeol.duckhang.chat.infrastructure.producer.RedisChatProducer;
 public class ChatService {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatRepository chatRepository;
+    @Qualifier("redisTemplate")
     private final RedisTemplate<String, String> redisTemplate;
     private final RedisChatProducer redisChatProducer;
 
@@ -33,9 +35,8 @@ public class ChatService {
      * db 저장 -> redis 저장 -> websocket broadcast
      */
     public void sendMessage(Chat message) throws Exception {
-        ChatEntity chatEntity;
+        ChatEntity chatEntity = message.toEntity();;
         try {
-            chatEntity = message.toEntity();
             chatRepository.save(chatEntity);
         } catch (Exception e) {
             log.error("메시지 DB에 저장 중 오류 발생");
