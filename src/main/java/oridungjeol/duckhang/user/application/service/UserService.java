@@ -95,7 +95,7 @@ public class UserService {
      */
     @Transactional
     public void deleteUser(UUID uuid) {
-        userJpaRepository.deleteUserByUuid(uuid);
-        authJpaRepository.deleteAuthByUuid(uuid);
+        userJpaRepository.deleteByUuid(uuid);
+        authJpaRepository.deleteByUuid(uuid);
     }
 }

@@ -8,12 +8,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface AuthJpaRepository extends JpaRepository<Auth, String> {
+public interface AuthJpaRepository extends JpaRepository<Auth, UUID> {
+    Optional<Auth> findByUuid(UUID uuid);
+
     Optional<Auth> findByProviderId(String providerId);
 
-    boolean existsByProviderId(String providerId);
+    Boolean existsByProviderId(String providerId);
 
-    void deleteAuthByUuid(UUID uuid);
-
-    Optional<Auth> findByUuid(UUID uuid);
+    void deleteByUuid(UUID uuid);
 }

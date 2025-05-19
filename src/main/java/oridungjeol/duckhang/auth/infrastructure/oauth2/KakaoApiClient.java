@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.security.oauth2;
+package oridungjeol.duckhang.auth.infrastructure.oauth2;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;

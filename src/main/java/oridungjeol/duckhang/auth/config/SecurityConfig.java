@@ -1,18 +1,19 @@
-package oridungjeol.duckhang.security.config;
+package oridungjeol.duckhang.auth.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import oridungjeol.duckhang.security.jwt.JwtAuthenticationFilter;
-import oridungjeol.duckhang.security.oauth2.CustomOAuth2UserService;
-import oridungjeol.duckhang.security.oauth2.OAuth2SuccessHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import oridungjeol.duckhang.auth.infrastructure.jwt.JwtAuthenticationFilter;
+import oridungjeol.duckhang.auth.infrastructure.oauth2.CustomOAuth2UserService;
+import oridungjeol.duckhang.auth.infrastructure.oauth2.OAuth2SuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -22,13 +23,14 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // 필요 시
+                )
+                .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -49,9 +51,7 @@ public class SecurityConfig {
                                                         .userService(customOAuth2UserService)
                                         )
                                         .successHandler(oAuth2SuccessHandler)
-                );
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

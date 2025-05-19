@@ -7,16 +7,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Auth {
+public class JwtToken {
     @Id
-    private UUID uuid;
-    private String provider;
-    private String providerId;
+    private String uuid;
+    private String refreshToken;
+    private LocalDateTime expiresAt;
 }
