@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.security.oauth2;
+package oridungjeol.duckhang.auth.infrastructure.oauth2;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,4 +17,3 @@ public class KakaoUnlinkService {
         kakaoApiClient.unlinkUserWithAdminKey(kakaoUserId, adminKey);
     }
 }
-

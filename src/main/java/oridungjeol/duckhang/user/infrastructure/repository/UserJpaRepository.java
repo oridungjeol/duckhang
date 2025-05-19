@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface UserJpaRepository extends JpaRepository<User, UUID> {
     Optional<User> findByUuid(UUID uuid);
 
-    void deleteUserByUuid(UUID uuid);
+    void deleteByUuid(UUID uuid);
 }

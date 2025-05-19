@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import oridungjeol.duckhang.auth.domain.model.CustomPrincipal;
 import oridungjeol.duckhang.user.application.usecase.UserUseCase;
 import oridungjeol.duckhang.user.presentation.dto.UpdatePrivacyRequest;
 import oridungjeol.duckhang.user.presentation.dto.UpdateProfileRequest;
@@ -31,19 +32,19 @@ public class UserController {
     @PatchMapping()
     @PreAuthorize("#uuid == authentication.principal.name")
     public void updateProfile(
-            @AuthenticationPrincipal String userId,
+            @AuthenticationPrincipal CustomPrincipal principal,
             @RequestBody UpdateProfileRequest profileRequest
             ) {
-        userUseCase.updateProfile(userId, profileRequest);
+        userUseCase.updateProfile(principal.getName(), profileRequest);
     }
 
     @PatchMapping("/privacy")
     @PreAuthorize("#uuid == authentication.principal.name")
     public void updatePrivacy(
-            @AuthenticationPrincipal String uuid,
+            @AuthenticationPrincipal CustomPrincipal principal,
             @RequestBody UpdatePrivacyRequest updatePrivacyRequest
     ) {
-        userUseCase.updatePrivacy(uuid, updatePrivacyRequest);
+        userUseCase.updatePrivacy(principal.getName(), updatePrivacyRequest);
     }
 
     @DeleteMapping()
