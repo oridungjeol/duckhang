@@ -49,6 +49,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             user = userJpaRepository.save(User.builder()
                     .uuid(auth.getUuid())
                     .nickname(profile.get("nickname").toString())
+                    .name(null)
+                    .phoneNumber(null)
+                    .address(null)
                     .email(account.get("email").toString())
                     .scope(0)
                     .build());
