@@ -36,20 +36,22 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Auth auth;
         User user;
         String providerId = userInfo.get("id").toString();
-        if (!authJpaRepository.existsByProviderId(providerId)) {
+        if (authJpaRepository.existsByProviderId(providerId)) {
+            auth = authJpaRepository.findByProviderId(providerId).get();
+            user = userJpaRepository.findByUuid(auth.getUuid()).get();
+        } else {
             auth = authJpaRepository.save(Auth.builder()
+                    .uuid(UUID.randomUUID())
                     .provider(provider)
                     .providerId(providerId)
                     .build());
 
             user = userJpaRepository.save(User.builder()
+                    .uuid(auth.getUuid())
                     .nickname(profile.get("nickname").toString())
                     .email(account.get("email").toString())
                     .scope(0)
                     .build());
-        } else {
-            auth = authJpaRepository.findByProviderId(providerId).get();
-            user = userJpaRepository.findByUuid(auth.getUuid()).get();
         }
 
         return new CustomPrincipal(auth.getUuid(), user.getNickname());

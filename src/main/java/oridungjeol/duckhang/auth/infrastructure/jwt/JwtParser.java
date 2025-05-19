@@ -2,6 +2,8 @@ package oridungjeol.duckhang.auth.infrastructure.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,14 @@ public class JwtParser {
     @Value("${jwt.secret}")
     private String secretKey;
     private Key key;
+
+    @PostConstruct
+    public void init() {
+        if (secretKey == null || secretKey.isEmpty()) {
+            throw new IllegalArgumentException("JWT secret key is missing");
+        }
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+    }
 
     /**
      * JWT 토큰에서 UUID(subject)를 추출합니다.
@@ -65,8 +75,8 @@ public class JwtParser {
      * @return 유효하면 true, 그렇지 않으면 false
      */
     public Boolean validateToken(String token) {
-        Date issuedAt = getClaims(token).get("IssuedAt", Date.class);
-        Date expiration = getClaims(token).get("Expiration", Date.class);
+        Date issuedAt = getClaims(token).getIssuedAt();
+        Date expiration = getClaims(token).getExpiration();
         Date now = Date.from(Instant.now());
         return issuedAt.after(now) && expiration.before(now);
     }
