@@ -48,9 +48,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String accessToken = token.get("accessToken");
             String refreshToken = token.get("refreshToken");
             if (!jwtParser.validateToken(accessToken) && !jwtParser.validateToken(refreshToken) && jwtJpaRepository.findByRefreshToken(refreshToken)) {
-                jwtGenerator.createAccessToken(jwtParser.getPrincipal(refreshToken));
+                accessToken = jwtGenerator.createAccessToken(jwtParser.getPrincipal(refreshToken));
             }
-            authenticate(token.get("accessToken"));
+            authenticate(accessToken);
             filterChain.doFilter(request, response);
         }
     }
