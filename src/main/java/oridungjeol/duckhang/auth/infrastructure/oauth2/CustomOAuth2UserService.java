@@ -36,7 +36,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Auth auth;
         User user;
         String providerId = userInfo.get("id").toString();
-        if (authJpaRepository.existsByProviderId(providerId)) {
+        if (!authJpaRepository.existsByProviderId(providerId)) {
             auth = authJpaRepository.save(Auth.builder()
                     .provider(provider)
                     .providerId(providerId)
