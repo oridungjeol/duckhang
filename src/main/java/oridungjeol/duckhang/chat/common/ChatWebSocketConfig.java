@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.chatting.common;
+package oridungjeol.duckhang.chat.common;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
