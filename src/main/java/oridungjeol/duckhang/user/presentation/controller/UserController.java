@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import oridungjeol.duckhang.auth.domain.model.CustomPrincipal;
 import oridungjeol.duckhang.user.application.usecase.UserUseCase;
+import oridungjeol.duckhang.user.presentation.dto.ProfileResponse;
 import oridungjeol.duckhang.user.presentation.dto.UpdatePrivacyRequest;
 import oridungjeol.duckhang.user.presentation.dto.UpdateProfileRequest;
-import oridungjeol.duckhang.user.presentation.dto.ProfileResponse;
 
 @RestController
 @RequestMapping("/user")
@@ -26,6 +26,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ProfileResponse profile(@PathVariable String userId) {
+        System.out.println("userId: " + userId);
         return userUseCase.getProfile(userId);
     }
 
@@ -34,7 +35,7 @@ public class UserController {
     public void updateProfile(
             @AuthenticationPrincipal CustomPrincipal principal,
             @RequestBody UpdateProfileRequest profileRequest
-            ) {
+    ) {
         userUseCase.updateProfile(principal.getName(), profileRequest);
     }
 
