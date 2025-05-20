@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         Map<String, String> token = resolveToken(request);
         if (token.isEmpty()) {
-            response.sendRedirect("http://localhost:3000/login");
+            response.sendRedirect("http://localhost/login");
         } else {
             String accessToken = token.get("accessToken");
             String refreshToken = token.get("refreshToken");
