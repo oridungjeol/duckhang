@@ -59,9 +59,6 @@ public class RedisChatConsumer implements StreamListener<String, MapRecord<Strin
                 .content(rawData.get("content"))
                 .created_at(LocalDateTime.parse(rawData.get("created_at")))
                 .build();
-
-        System.out.println("created_at: " + chat.getCreated_at());
-        System.out.println("content: " + chat.getContent());
     }
 
     /**
