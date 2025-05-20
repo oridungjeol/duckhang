@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Getter
-@Setter
 public class ChatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
