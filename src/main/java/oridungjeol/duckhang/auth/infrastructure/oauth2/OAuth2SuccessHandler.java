@@ -69,6 +69,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
-        response.sendRedirect("/user/profile");
+        response.sendRedirect("http://localhost:3000/user/" + principal.getName());
     }
 }
