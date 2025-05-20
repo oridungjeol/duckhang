@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
 
 @Repository
-public interface ChatRepository extends JpaRepository<ChatEntity, Integer> {
+public interface ChatRepository extends JpaRepository<ChatEntity, Long> {
 }
