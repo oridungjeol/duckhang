@@ -46,9 +46,9 @@ public class RedisChatConsumer implements StreamListener<String, MapRecord<Strin
      */
     @Override
     public void onMessage(MapRecord<String, String, String> message) {
-        System.out.println("MessageId: " + message.getId());
-        System.out.println("Stream: " + message.getStream());
-        System.out.println("Body: " + message.getValue());
+        log.info("MessageId: " + message.getId());
+        log.info("Stream: " + message.getStream());
+        log.info("Body: " + message.getValue());
 
         Map<String, String> rawData = message.getValue();
 
