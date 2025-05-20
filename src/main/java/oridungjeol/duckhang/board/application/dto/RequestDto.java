@@ -1,12 +1,9 @@
 package oridungjeol.duckhang.board.application.dto;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Getter
-public class PurchaseRequestDto {
+public class RequestDto {
     private String title;
     private String content;
     private String imageUrl;

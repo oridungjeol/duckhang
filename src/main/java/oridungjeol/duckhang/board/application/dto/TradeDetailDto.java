@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record PurchaseDetailDto(
+public record TradeDetailDto(
         Long id,
         String nickname,
         String title,

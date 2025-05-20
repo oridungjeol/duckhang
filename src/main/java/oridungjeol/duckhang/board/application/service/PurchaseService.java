@@ -4,9 +4,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import oridungjeol.duckhang.board.application.dto.AllPurchaseDto;
-import oridungjeol.duckhang.board.application.dto.PurchaseDetailDto;
-import oridungjeol.duckhang.board.application.dto.PurchaseRequestDto;
+import oridungjeol.duckhang.board.application.dto.TradeListDto;
+import oridungjeol.duckhang.board.application.dto.TradeDetailDto;
+import oridungjeol.duckhang.board.application.dto.RequestDto;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.domain.Purchase;
 import oridungjeol.duckhang.board.infrastructure.entity.BoardEntity;
@@ -29,13 +29,13 @@ public class PurchaseService {
 
     public Long createPurchase(
             UUID authorUuid,
-            PurchaseRequestDto purchaseRequestDto
+            RequestDto requestDto
     ) {
         BoardEntity boardEntity = BoardEntity.builder()
                 .authorUuid(authorUuid)
-                .title(purchaseRequestDto.getTitle())
-                .content(purchaseRequestDto.getContent())
-                .imageUrl(purchaseRequestDto.getImageUrl())
+                .title(requestDto.getTitle())
+                .content(requestDto.getContent())
+                .imageUrl(requestDto.getImageUrl())
                 .boardType(BoardType.PURCHASE)
                 .build();
 
@@ -43,7 +43,7 @@ public class PurchaseService {
 
         PurchaseEntity purchaseEntity = PurchaseEntity.builder()
                 .boardId(boardEntity.getId())
-                .price(purchaseRequestDto.getPrice())
+                .price(requestDto.getPrice())
                 .build();
 
         purchaseJpaRepository.save(purchaseEntity);
@@ -51,7 +51,7 @@ public class PurchaseService {
         return boardEntity.getId();
     }
 
-    public List<AllPurchaseDto> getAllPurchases() {
+    public List<TradeListDto> getAllPurchases() {
         List<BoardEntity> boardEntities = boardJpaRepository.findAllByBoardType(BoardType.PURCHASE);
 
         return boardEntities.stream()
@@ -59,10 +59,10 @@ public class PurchaseService {
                     PurchaseEntity purchaseEntity = purchaseJpaRepository.findByBoardId(boardEntity.getId())
                             .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
 
-                    User user = userJpaRepository.findById(boardEntity.getAuthorUuid())
+                    User user = userJpaRepository.findByUuid(boardEntity.getAuthorUuid())
                             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-                    return AllPurchaseDto.builder()
+                    return TradeListDto.builder()
                             .id(boardEntity.getId())
                             .title(boardEntity.getTitle())
                             .imageUrl(boardEntity.getImageUrl())
@@ -74,7 +74,7 @@ public class PurchaseService {
                 .toList();
     }
 
-    public PurchaseDetailDto getPurchaseDetail(Long id) {
+    public TradeDetailDto getPurchaseDetail(Long id) {
         BoardEntity boardEntity = boardJpaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found for id " + id));
 
@@ -84,7 +84,7 @@ public class PurchaseService {
         User user = userJpaRepository.findById(boardEntity.getAuthorUuid())
                 .orElseThrow(() -> new EntityNotFoundException("User not found for UUID " + boardEntity.getAuthorUuid()));
 
-        return PurchaseDetailDto.builder()
+        return TradeDetailDto.builder()
                 .id(boardEntity.getId())
                 .nickname(user.getNickname())
                 .title(boardEntity.getTitle())
@@ -95,7 +95,7 @@ public class PurchaseService {
                 .build();
     }
     @Transactional
-    public void updatePurchase(UUID authorUuid, Long id, PurchaseRequestDto purchaseRequestDto) {
+    public Long updatePurchase(UUID authorUuid, Long id, RequestDto requestDto) {
         BoardEntity boardEntity = boardJpaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Board not found"));
         PurchaseEntity purchaseEntity = purchaseJpaRepository.findByBoardId(id)
@@ -106,11 +106,13 @@ public class PurchaseService {
 
         board.validateAuthor(authorUuid);
 
-        board.update(purchaseRequestDto.getTitle(), purchaseRequestDto.getContent(), purchaseRequestDto.getImageUrl());
-        purchase.update(purchaseRequestDto.getPrice());
+        board.update(requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl());
+        purchase.update(requestDto.getPrice());
 
         boardEntity.updateFromDomain(board);
         purchaseEntity.updateFromDomain(purchase);
+
+        return boardEntity.getId();
     }
 
     public void deletePurchase(UUID authorUuid, Long id) {
