@@ -53,10 +53,12 @@ public class RedisChatConsumer implements StreamListener<String, MapRecord<Strin
         Map<String, String> rawData = message.getValue();
 
         ChatEntity chat = new ChatEntity();
-        chat.setRoom_id(Integer.parseInt(rawData.get("room_id")));
-        chat.setAuthor_uuid(rawData.get("author_uuid"));
-        chat.setContent(rawData.get("content"));
-        chat.setCreated_at(LocalDateTime.parse(rawData.get("created_at")));
+        ChatEntity.builder()
+                .room_id(Integer.parseInt(rawData.get("room_id")))
+                .author_uuid(rawData.get("author_uuid"))
+                .content(rawData.get("content"))
+                .created_at(LocalDateTime.parse(rawData.get("created_at")))
+                .build();
 
         System.out.println("created_at: " + chat.getCreated_at());
         System.out.println("content: " + chat.getContent());
