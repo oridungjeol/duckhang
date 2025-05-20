@@ -43,18 +43,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         Map<String, String> token = resolveToken(request);
         if (token.isEmpty()) {
-            response.sendRedirect("/localhost:3000/login");
+            response.sendRedirect("http://localhost:3000/login");
         } else {
             String accessToken = token.get("accessToken");
             String refreshToken = token.get("refreshToken");
-            if (!jwtParser.validateToken(accessToken) && !jwtParser.validateToken(refreshToken) && jwtJpaRepository.existsByRefreshToken(refreshToken)) {
+            if (!jwtParser.validateToken(accessToken) && jwtJpaRepository.existsByRefreshToken(refreshToken)) {
                 accessToken = jwtGenerator.createAccessToken(jwtParser.getPrincipal(refreshToken));
             }
             authenticate(accessToken);
             filterChain.doFilter(request, response);
         }
     }
-
 
     /**
      * 요청 쿠키에서 Access Token과 Refresh Token을 추출합니다.

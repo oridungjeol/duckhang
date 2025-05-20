@@ -26,7 +26,6 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ProfileResponse profile(@PathVariable String userId) {
-        System.out.println("userId: " + userId);
         return userUseCase.getProfile(userId);
     }
 
