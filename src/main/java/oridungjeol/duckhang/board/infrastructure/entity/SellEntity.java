@@ -11,10 +11,10 @@ import lombok.Setter;
 public class SellEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(name = "board_id")
-    private int boardId;
+    private Long boardId;
 
     private int price;
 

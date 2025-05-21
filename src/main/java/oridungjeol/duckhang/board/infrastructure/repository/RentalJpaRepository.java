@@ -5,6 +5,6 @@ import oridungjeol.duckhang.board.infrastructure.entity.RentalEntity;
 
 import java.util.Optional;
 
-public interface RentalRepository extends JpaRepository<RentalEntity, Integer> {
-    Optional<RentalEntity> findByBoardId(int boardId);
+public interface RentalJpaRepository extends JpaRepository<RentalEntity, Integer> {
+    Optional<RentalEntity> findByBoardId(Long boardId);
 }
