@@ -12,9 +12,9 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/payment")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin("http://localhost:3000")
 public class OrderController {
 
     private final PaymentService paymentService;

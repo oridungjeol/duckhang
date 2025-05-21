@@ -7,15 +7,16 @@ import oridungjeol.duckhang.payment.domain.PriceProvider;
 
 import java.util.List;
 
+
 @RestController
-@RequestMapping("/api/price")
+@RequestMapping("/payment")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin("http://localhost:3000")
 public class PriceController {
 
     private final List<PriceProvider> priceProviders;
 
-    @GetMapping("/{type}/{boardId}")
+    @GetMapping("/price/{type}/{boardId}")
     public ResponseEntity<?> getPrice(
             @PathVariable String type,
             @PathVariable int boardId

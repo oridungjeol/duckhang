@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import oridungjeol.duckhang.payment.application.PaymentService;
 import oridungjeol.duckhang.payment.presentation.dto.PaymentRequestDto;
 
-@CrossOrigin(origins = "http://localhost:3000")
+
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/payment")
+@CrossOrigin("http://localhost:3000")
 @RequiredArgsConstructor
+
 public class PaymentController {
 
     private final PaymentService paymentService;
