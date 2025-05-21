@@ -1,16 +1,24 @@
 package oridungjeol.duckhang.chat.application.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.infrastructure.ChatRepository;
-import oridungjeol.duckhang.chat.infrastructure.consumer.RedisChatConsumer;
+import oridungjeol.duckhang.chat.infrastructure.redis.RedisChat;
+import oridungjeol.duckhang.chat.infrastructure.redis.consumer.RedisStreamsChatConsumer;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
-import oridungjeol.duckhang.chat.infrastructure.producer.RedisChatProducer;
+import oridungjeol.duckhang.chat.infrastructure.redis.producer.RedisStreamsChatProducer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ChatService {
@@ -18,15 +26,17 @@ public class ChatService {
     private final ChatRepository chatRepository;
     @Qualifier("redisTemplate")
     private final RedisTemplate<String, String> redisTemplate;
-    private final RedisChatProducer redisChatProducer;
+    private final RedisStreamsChatProducer redisStreamsChatProducer;
+    private final RedisChat redisChat;
 
     private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatRepository chatRepository, RedisTemplate<String, String> redisTemplate, RedisChatConsumer redisChatConsumer, RedisChatProducer redisChatProducer) {
+    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatRepository chatRepository, RedisTemplate<String, String> redisTemplate, RedisStreamsChatConsumer redisStreamsChatConsumer, RedisStreamsChatProducer redisStreamsChatProducer, RedisChat redisChat) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.chatRepository = chatRepository;
         this.redisTemplate = redisTemplate;
-        this.redisChatProducer = redisChatProducer;
+        this.redisStreamsChatProducer = redisStreamsChatProducer;
+        this.redisChat = redisChat;
     }
 
     /**
@@ -44,7 +54,8 @@ public class ChatService {
         }
 
         try {
-            redisChatProducer.saveInRedis(redisTemplate, chatEntity);
+            redisChat.saveInRedisList(redisTemplate, chatEntity);
+            redisStreamsChatProducer.saveInRedisStreams(redisTemplate, chatEntity);
         } catch (Exception e) {
             log.error("메시지 Redis에 저장 중 오류 발생");
             throw new Exception(e);
@@ -58,4 +69,21 @@ public class ChatService {
         }
     }
 
+    /**
+     * 최신 50개의 메시지를 리턴
+     */
+    public List<Chat> findRecentChattingByRoom_id(long room_id) throws JsonProcessingException {
+        List<String> recentChatList = redisTemplate.opsForList().range("recent-chat:" + room_id, 0, 49);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        List<Chat> chatList = new ArrayList<>();
+        for (String recentChat : recentChatList) {
+            ChatEntity chatEntity = objectMapper.readValue(recentChat, ChatEntity.class);
+            chatList.add(chatEntity.chatEntityToDto());
+        }
+
+        return chatList;
+    }
 }

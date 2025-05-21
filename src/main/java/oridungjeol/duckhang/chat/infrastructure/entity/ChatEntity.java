@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import oridungjeol.duckhang.chat.application.domain.MessageType;
+import oridungjeol.duckhang.chat.application.dto.Chat;
 
 import java.time.LocalDateTime;
 
@@ -28,5 +29,15 @@ public class ChatEntity {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime created_at;
 
-    private int room_id;
+    private long room_id;
+
+    public Chat chatEntityToDto() {
+        return Chat.builder()
+                .type(type)
+                .author_uuid(author_uuid)
+                .content(content)
+                .created_at(created_at)
+                .room_id(room_id)
+                .build();
+    }
 }

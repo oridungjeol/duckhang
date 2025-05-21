@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.chat.infrastructure.consumer;
+package oridungjeol.duckhang.chat.infrastructure.redis.consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ import java.util.Map;
  * 해당 파일과 함께 RedisConfig, Redis Operator를 참고해 주세요
  */
 @Service
-public class RedisChatConsumer implements StreamListener<String, MapRecord<String, String, String>>,
+public class RedisStreamsChatConsumer implements StreamListener<String, MapRecord<String, String, String>>,
         InitializingBean,
         DisposableBean
 {
@@ -35,7 +35,7 @@ public class RedisChatConsumer implements StreamListener<String, MapRecord<Strin
 
     private final RedisOperator redisOperator;
 
-    public RedisChatConsumer(RedisTemplate<String, String> redisTemplate, RedisOperator redisOperator) {
+    public RedisStreamsChatConsumer(RedisTemplate<String, String> redisTemplate, RedisOperator redisOperator) {
         this.redisTemplate = redisTemplate;
         this.redisOperator = redisOperator;
     }

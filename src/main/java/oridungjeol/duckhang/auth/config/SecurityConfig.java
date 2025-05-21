@@ -61,8 +61,20 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
+
+        configuration.addAllowedMethod("OPTIONS");
+        configuration.addAllowedMethod("GET");
+        configuration.addAllowedMethod("POST");
+        configuration.addAllowedMethod("PUT");
+        configuration.addAllowedMethod("PATCH");
+        configuration.addAllowedMethod("DELETE");
+
+        configuration.addAllowedHeader("Authorization");
+        configuration.addAllowedHeader("KA");
+        configuration.addAllowedHeader("Origin");
+        configuration.addAllowedHeader("X-Requested-With");
+        configuration.addAllowedHeader("Content-Type");
+        configuration.addAllowedHeader("Accept");
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

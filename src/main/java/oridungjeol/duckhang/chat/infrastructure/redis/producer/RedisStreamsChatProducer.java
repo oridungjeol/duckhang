@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.chat.infrastructure.producer;
+package oridungjeol.duckhang.chat.infrastructure.redis.producer;
 
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.connection.stream.StreamRecords;
@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class RedisChatProducer {
-    public void saveInRedis(RedisTemplate<String, String> redisTemplate, ChatEntity chatEntity) {
+public class RedisStreamsChatProducer {
+    public void saveInRedisStreams(RedisTemplate<String, String> redisTemplate, ChatEntity chatEntity) {
         Map<String, String> chatMap = new HashMap<>();
         chatMap.put("room_id", String.valueOf(chatEntity.getRoom_id()));
         chatMap.put("author_uuid", chatEntity.getAuthor_uuid());
