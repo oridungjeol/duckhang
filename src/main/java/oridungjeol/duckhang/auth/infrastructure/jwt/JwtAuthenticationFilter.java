@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -41,9 +42,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+
         Map<String, String> token = resolveToken(request);
         if (token.isEmpty()) {
-            response.sendRedirect("http://localhost/login");
+            response.sendRedirect("http://localhost:3000/login");
         } else {
             String accessToken = token.get("accessToken");
             String refreshToken = token.get("refreshToken");
