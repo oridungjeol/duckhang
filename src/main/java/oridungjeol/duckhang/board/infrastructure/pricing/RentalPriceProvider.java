@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board.application.service;
+package oridungjeol.duckhang.board.infrastructure.pricing;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,9 +1,8 @@
-package oridungjeol.duckhang.board.application.service;
+package oridungjeol.duckhang.board.infrastructure.pricing;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import oridungjeol.duckhang.board.infrastructure.repository.PurchaseJpaRepository;
-import oridungjeol.duckhang.board.infrastructure.repository.RentalJpaRepository;
 import oridungjeol.duckhang.payment.domain.PriceProvider;
 
 @Component
