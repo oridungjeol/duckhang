@@ -1,9 +1,11 @@
 package oridungjeol.duckhang.chat.infrastructure.mapper;
 
+import org.springframework.stereotype.Component;
 import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocument;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
 
+@Component
 public class ChatMapper {
     public ChatEntity chatToEntity(Chat chat) {
         return ChatEntity.builder()
@@ -15,23 +17,23 @@ public class ChatMapper {
                 .build();
     }
 
-    public Chat chatEntityToDto(ChatEntity chatEntity) {
-        return Chat.builder()
-                .type(chatEntity.getType())
-                .author_uuid(chatEntity.getAuthor_uuid())
-                .content(chatEntity.getContent())
-                .created_at(chatEntity.getCreated_at())
-                .room_id(chatEntity.getRoom_id())
-                .build();
-    }
-
     public Chat chatDocumentToDto(ChatDocument chatDocument) {
         return Chat.builder()
                 .type(chatDocument.getType())
-                .author_uuid(chatDocument.getAuthor_uuid())
+                .author_uuid(chatDocument.getAuthorUuid())
                 .content(chatDocument.getContent())
-                .created_at(chatDocument.getCreated_at())
-                .room_id(chatDocument.getRoom_id())
+                .created_at(chatDocument.getCreatedAt())
+                .room_id(chatDocument.getRoomId())
+                .build();
+    }
+
+    public static ChatDocument toChatDocument(Chat chat) {
+        return ChatDocument.builder()
+                .type(chat.getType())
+                .authorUuid(chat.getAuthor_uuid())
+                .content(chat.getContent())
+                .createdAt(chat.getCreated_at())
+                .roomId(chat.getRoom_id())
                 .build();
     }
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class Chat {
-    private int id;
+    private String id;
 
     private MessageType type;
 

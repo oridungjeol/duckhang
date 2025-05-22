@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface ChatESRepository extends ElasticsearchRepository<ChatDocument, Long> {
-    @Query("{\"term\": {\"room_id\": ?0}}")
-    List<ChatDocument> findChatByRoom_id(long room_id);
+    @Query("{\"term\": {\"roomId\": ?0}}")
+    List<ChatDocument> findChatByRoomId(long roomId);
 }

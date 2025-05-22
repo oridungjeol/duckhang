@@ -41,15 +41,15 @@ public class ChatService {
 
     public void sendMessage(Chat message) throws Exception {
         ChatEntity chatEntity = chatMapper.chatToEntity(message);;
-        try {
-            chatRepository.save(chatEntity);
-        } catch (Exception e) {
-            log.error("메시지 DB에 저장 중 오류 발생");
-            throw new Exception(e);
-        }
+//        try {
+//            chatRepository.save(chatEntity);
+//        } catch (Exception e) {
+//            log.error("메시지 DB에 저장 중 오류 발생");
+//            throw new Exception(e);
+//        }
 
         try {
-            ChatDocument chatDocument = ChatDocument.toChatDocument(chatEntity);
+            ChatDocument chatDocument = chatMapper.toChatDocument(message);
             chatESRepository.save(chatDocument);
         } catch (Exception e) {
             log.error("메시지 Elastic Search에 저장 중 오류 발생");
@@ -68,11 +68,12 @@ public class ChatService {
      * 최신 50개의 메시지를 리턴
      */
     public List<Chat> findChatByRoom_id(long room_id) throws JsonProcessingException {
-        List<ChatDocument> chatDocumentList = chatESRepository.findChatByRoom_id(room_id);
-        List<Chat> chatList = new ArrayList<>();
+        List<ChatDocument> chatDocumentList = chatESRepository.findChatByRoomId(room_id);
 
+        List<Chat> chatList = new ArrayList<>();
         for (ChatDocument chatDocument: chatDocumentList) {
             chatList.add(chatMapper.chatDocumentToDto(chatDocument));
+            log.info(chatMapper.chatDocumentToDto(chatDocument).getContent());
         }
 
         return chatList;

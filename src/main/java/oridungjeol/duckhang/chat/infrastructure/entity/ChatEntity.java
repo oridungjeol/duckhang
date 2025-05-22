@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class ChatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
 
     @Enumerated(EnumType.STRING) // enum 이름을 문자열로 DB에 저장
     private MessageType type;
