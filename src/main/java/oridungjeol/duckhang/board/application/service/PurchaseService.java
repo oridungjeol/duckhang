@@ -9,8 +9,8 @@ import oridungjeol.duckhang.board.application.dto.TradeDetailDto;
 import oridungjeol.duckhang.board.application.dto.RequestDto;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.domain.Purchase;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.repository.BoardDocumentRepository;
+//import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
+//import oridungjeol.duckhang.board.infrastructure.elasticsearch.repository.BoardDocumentRepository;
 import oridungjeol.duckhang.board.infrastructure.entity.BoardEntity;
 import oridungjeol.duckhang.board.infrastructure.entity.PurchaseEntity;
 import oridungjeol.duckhang.board.infrastructure.repository.BoardJpaRepository;
@@ -28,7 +28,7 @@ public class PurchaseService {
     private final BoardJpaRepository boardJpaRepository;
     private final PurchaseJpaRepository purchaseJpaRepository;
     private final UserJpaRepository userJpaRepository;
-    private final BoardDocumentRepository boardDocumentRepository;
+//    private final BoardDocumentRepository boardDocumentRepository;
 
     public Long createPurchase(
             UUID authorUuid,
@@ -51,17 +51,17 @@ public class PurchaseService {
 
         purchaseJpaRepository.save(purchaseEntity);
 
-        BoardDocument document = BoardDocument.builder()
-                .id(boardEntity.getId())
-                .authorUuid(boardEntity.getAuthorUuid())
-                .title(boardEntity.getTitle())
-                .content(boardEntity.getContent())
-                .imageUrl(boardEntity.getImageUrl())
-                .createdAt(boardEntity.getCreatedAt())
-                .boardType(boardEntity.getBoardType())
-                .build();
-
-        boardDocumentRepository.save(document);
+//        BoardDocument document = BoardDocument.builder()
+//                .id(boardEntity.getId())
+//                .authorUuid(String.valueOf(boardEntity.getAuthorUuid()))
+//                .title(boardEntity.getTitle())
+//                .content(boardEntity.getContent())
+//                .imageUrl(boardEntity.getImageUrl())
+//                .createdAt(boardEntity.getCreatedAt())
+//                .boardType(boardEntity.getBoardType())
+//                .build();
+//
+//        boardDocumentRepository.save(document);
 
         return boardEntity.getId();
     }

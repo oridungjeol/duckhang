@@ -12,6 +12,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.infrastructure.ChatRepository;
+import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocument;
+import oridungjeol.duckhang.chat.infrastructure.elasticsearch.repository.ChatESRepository;
 import oridungjeol.duckhang.chat.infrastructure.redis.RedisChat;
 import oridungjeol.duckhang.chat.infrastructure.redis.consumer.RedisStreamsChatConsumer;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
@@ -26,24 +28,17 @@ public class ChatService {
     private final ChatRepository chatRepository;
     @Qualifier("redisTemplate")
     private final RedisTemplate<String, String> redisTemplate;
-    private final RedisStreamsChatProducer redisStreamsChatProducer;
-    private final RedisChat redisChat;
+    private final ChatESRepository chatESRepository;
 
     private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatRepository chatRepository, RedisTemplate<String, String> redisTemplate, RedisStreamsChatConsumer redisStreamsChatConsumer, RedisStreamsChatProducer redisStreamsChatProducer, RedisChat redisChat) {
+    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatRepository chatRepository, RedisTemplate<String, String> redisTemplate, RedisStreamsChatConsumer redisStreamsChatConsumer, RedisStreamsChatProducer redisStreamsChatProducer, RedisChat redisChat, ChatESRepository chatESRepository) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.chatRepository = chatRepository;
         this.redisTemplate = redisTemplate;
-        this.redisStreamsChatProducer = redisStreamsChatProducer;
-        this.redisChat = redisChat;
+        this.chatESRepository = chatESRepository;
     }
 
-    /**
-     * Redis producer 코드
-     * mysql에 채팅 데이터 insert
-     * db 저장 -> redis 저장 -> websocket broadcast
-     */
     public void sendMessage(Chat message) throws Exception {
         ChatEntity chatEntity = message.toEntity();;
         try {
@@ -54,10 +49,10 @@ public class ChatService {
         }
 
         try {
-            redisChat.saveInRedisList(redisTemplate, chatEntity);
-            redisStreamsChatProducer.saveInRedisStreams(redisTemplate, chatEntity);
+            ChatDocument chatDocument = ChatDocument.toChatDocument(chatEntity);
+            chatESRepository.save(chatDocument);
         } catch (Exception e) {
-            log.error("메시지 Redis에 저장 중 오류 발생");
+            log.error("메시지 Elastic Search에 저장 중 오류 발생");
             throw new Exception(e);
         }
 
