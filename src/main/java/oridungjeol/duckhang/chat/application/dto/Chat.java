@@ -24,14 +24,4 @@ public class Chat {
     private LocalDateTime created_at;
 
     private long room_id;
-
-    public ChatEntity toEntity() {
-        return ChatEntity.builder()
-                .type(type)
-                .author_uuid(author_uuid)
-                .content(content)
-                .created_at(created_at)
-                .room_id(room_id)
-                .build();
-    }
 }

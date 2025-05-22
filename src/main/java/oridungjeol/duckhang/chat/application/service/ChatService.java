@@ -14,6 +14,7 @@ import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.infrastructure.ChatRepository;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocument;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.repository.ChatESRepository;
+import oridungjeol.duckhang.chat.infrastructure.mapper.ChatMapper;
 import oridungjeol.duckhang.chat.infrastructure.redis.RedisChat;
 //import oridungjeol.duckhang.chat.infrastructure.redis.consumer.RedisStreamsChatConsumer;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
@@ -27,17 +28,19 @@ public class ChatService {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatRepository chatRepository;
     private final ChatESRepository chatESRepository;
+    private final ChatMapper chatMapper;
 
     private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatRepository chatRepository, ChatESRepository chatESRepository) {
+    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatRepository chatRepository, ChatESRepository chatESRepository, ChatMapper chatMapper) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.chatRepository = chatRepository;
         this.chatESRepository = chatESRepository;
+        this.chatMapper = chatMapper;
     }
 
     public void sendMessage(Chat message) throws Exception {
-        ChatEntity chatEntity = message.toEntity();;
+        ChatEntity chatEntity = chatMapper.chatToEntity(message);;
         try {
             chatRepository.save(chatEntity);
         } catch (Exception e) {
@@ -64,18 +67,14 @@ public class ChatService {
     /**
      * 최신 50개의 메시지를 리턴
      */
-//    public List<Chat> findRecentChattingByRoom_id(long room_id) throws JsonProcessingException {
-//        List<String> recentChatList = redisTemplate.opsForList().range("recent-chat:" + room_id, 0, 49);
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.registerModule(new JavaTimeModule());
-//
-//        List<Chat> chatList = new ArrayList<>();
-//        for (String recentChat : recentChatList) {
-//            ChatEntity chatEntity = objectMapper.readValue(recentChat, ChatEntity.class);
-//            chatList.add(chatEntity.chatEntityToDto());
-//        }
-//
-//        return chatList;
-//    }
+    public List<Chat> findChatByRoom_id(long room_id) throws JsonProcessingException {
+        List<ChatDocument> chatDocumentList = chatESRepository.findChatByRoom_id(room_id);
+        List<Chat> chatList = new ArrayList<>();
+
+        for (ChatDocument chatDocument: chatDocumentList) {
+            chatList.add(chatMapper.chatDocumentToDto(chatDocument));
+        }
+
+        return chatList;
+    }
 }
