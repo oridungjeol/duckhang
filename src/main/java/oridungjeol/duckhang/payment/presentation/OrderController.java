@@ -14,7 +14,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/payment")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
 public class OrderController {
 
     private final PaymentService paymentService;
