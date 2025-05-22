@@ -11,14 +11,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.chat.application.dto.Chat;
-import oridungjeol.duckhang.chat.infrastructure.ChatRepository;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocument;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.repository.ChatESRepository;
 import oridungjeol.duckhang.chat.infrastructure.mapper.ChatMapper;
-import oridungjeol.duckhang.chat.infrastructure.redis.RedisChat;
-//import oridungjeol.duckhang.chat.infrastructure.redis.consumer.RedisStreamsChatConsumer;
-import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
-import oridungjeol.duckhang.chat.infrastructure.redis.producer.RedisStreamsChatProducer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,28 +21,18 @@ import java.util.List;
 @Service
 public class ChatService {
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final ChatRepository chatRepository;
     private final ChatESRepository chatESRepository;
     private final ChatMapper chatMapper;
 
     private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatRepository chatRepository, ChatESRepository chatESRepository, ChatMapper chatMapper) {
+    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatESRepository chatESRepository, ChatMapper chatMapper) {
         this.simpMessagingTemplate = simpMessagingTemplate;
-        this.chatRepository = chatRepository;
         this.chatESRepository = chatESRepository;
         this.chatMapper = chatMapper;
     }
 
     public void sendMessage(Chat message) throws Exception {
-        ChatEntity chatEntity = chatMapper.chatToEntity(message);;
-//        try {
-//            chatRepository.save(chatEntity);
-//        } catch (Exception e) {
-//            log.error("메시지 DB에 저장 중 오류 발생");
-//            throw new Exception(e);
-//        }
-
         try {
             ChatDocument chatDocument = chatMapper.toChatDocument(message);
             chatESRepository.save(chatDocument);
@@ -73,7 +58,6 @@ public class ChatService {
         List<Chat> chatList = new ArrayList<>();
         for (ChatDocument chatDocument: chatDocumentList) {
             chatList.add(chatMapper.chatDocumentToDto(chatDocument));
-            log.info(chatMapper.chatDocumentToDto(chatDocument).getContent());
         }
 
         return chatList;

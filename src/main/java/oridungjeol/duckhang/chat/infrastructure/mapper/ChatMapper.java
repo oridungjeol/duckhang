@@ -3,19 +3,18 @@ package oridungjeol.duckhang.chat.infrastructure.mapper;
 import org.springframework.stereotype.Component;
 import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocument;
-import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
 
 @Component
 public class ChatMapper {
-    public ChatEntity chatToEntity(Chat chat) {
-        return ChatEntity.builder()
-                .type(chat.getType())
-                .author_uuid(chat.getAuthor_uuid())
-                .content(chat.getContent())
-                .created_at(chat.getCreated_at())
-                .room_id(chat.getRoom_id())
-                .build();
-    }
+//    public ChatEntity chatToEntity(Chat chat) {
+//        return ChatEntity.builder()
+//                .type(chat.getType())
+//                .author_uuid(chat.getAuthor_uuid())
+//                .content(chat.getContent())
+//                .created_at(chat.getCreated_at())
+//                .room_id(chat.getRoom_id())
+//                .build();
+//    }
 
     public Chat chatDocumentToDto(ChatDocument chatDocument) {
         return Chat.builder()

@@ -13,7 +13,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import oridungjeol.duckhang.chat.application.domain.MessageType;
-import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
 
 import java.time.LocalDateTime;
 

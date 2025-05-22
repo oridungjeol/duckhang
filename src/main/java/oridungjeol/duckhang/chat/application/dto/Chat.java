@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import oridungjeol.duckhang.chat.application.domain.MessageType;
-import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
 
 import java.time.LocalDateTime;
 
