@@ -27,7 +27,10 @@ public class BoardDocument {
 
     private String imageUrl;
 
-    private LocalDateTime createdAt;
+//    private LocalDateTime createdAt;
+
+    private int price;
 
     private BoardType boardType;
+
 }

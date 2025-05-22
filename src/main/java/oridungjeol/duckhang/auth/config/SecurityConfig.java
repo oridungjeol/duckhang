@@ -46,18 +46,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/user/*").permitAll()
                         .anyRequest().authenticated())
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            String requestedWith = request.getHeader("X-Requested-With");
-                            boolean isAjax = "XMLHttpRequest".equals(requestedWith);
 
-                            if (isAjax) {
-                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                            } else {
-                                response.sendRedirect("/oauth2/authorization/kakao");
-                            }
-                        })
-                )
                 .oauth2Login(oauth2 ->
                         oauth2
                                 .userInfoEndpoint(userInfo ->

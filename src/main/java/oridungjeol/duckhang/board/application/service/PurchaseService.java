@@ -30,10 +30,7 @@ public class PurchaseService {
     private final UserJpaRepository userJpaRepository;
     private final BoardDocumentRepository boardDocumentRepository;
 
-    public Long createPurchase(
-            UUID authorUuid,
-            RequestDto requestDto
-    ) {
+    public Long createPurchase(UUID authorUuid, RequestDto requestDto) {
         BoardEntity boardEntity = BoardEntity.builder()
                 .authorUuid(authorUuid)
                 .title(requestDto.getTitle())
@@ -41,14 +38,12 @@ public class PurchaseService {
                 .imageUrl(requestDto.getImageUrl())
                 .boardType(BoardType.PURCHASE)
                 .build();
-
         boardJpaRepository.save(boardEntity);
 
         PurchaseEntity purchaseEntity = PurchaseEntity.builder()
                 .boardId(boardEntity.getId())
                 .price(requestDto.getPrice())
                 .build();
-
         purchaseJpaRepository.save(purchaseEntity);
 
         BoardDocument document = BoardDocument.builder()
@@ -57,8 +52,9 @@ public class PurchaseService {
                 .title(boardEntity.getTitle())
                 .content(boardEntity.getContent())
                 .imageUrl(boardEntity.getImageUrl())
-                .createdAt(boardEntity.getCreatedAt())
+//                .createdAt(boardEntity.getCreatedAt())
                 .boardType(boardEntity.getBoardType())
+                .price(purchaseEntity.getPrice())
                 .build();
 
         boardDocumentRepository.save(document);
