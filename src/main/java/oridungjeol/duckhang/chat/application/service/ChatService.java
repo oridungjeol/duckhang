@@ -15,7 +15,7 @@ import oridungjeol.duckhang.chat.infrastructure.ChatRepository;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocument;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.repository.ChatESRepository;
 import oridungjeol.duckhang.chat.infrastructure.redis.RedisChat;
-import oridungjeol.duckhang.chat.infrastructure.redis.consumer.RedisStreamsChatConsumer;
+//import oridungjeol.duckhang.chat.infrastructure.redis.consumer.RedisStreamsChatConsumer;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
 import oridungjeol.duckhang.chat.infrastructure.redis.producer.RedisStreamsChatProducer;
 
@@ -26,16 +26,13 @@ import java.util.List;
 public class ChatService {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatRepository chatRepository;
-    @Qualifier("redisTemplate")
-    private final RedisTemplate<String, String> redisTemplate;
     private final ChatESRepository chatESRepository;
 
     private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatRepository chatRepository, RedisTemplate<String, String> redisTemplate, RedisStreamsChatConsumer redisStreamsChatConsumer, RedisStreamsChatProducer redisStreamsChatProducer, RedisChat redisChat, ChatESRepository chatESRepository) {
+    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatRepository chatRepository, ChatESRepository chatESRepository) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.chatRepository = chatRepository;
-        this.redisTemplate = redisTemplate;
         this.chatESRepository = chatESRepository;
     }
 
@@ -67,18 +64,18 @@ public class ChatService {
     /**
      * 최신 50개의 메시지를 리턴
      */
-    public List<Chat> findRecentChattingByRoom_id(long room_id) throws JsonProcessingException {
-        List<String> recentChatList = redisTemplate.opsForList().range("recent-chat:" + room_id, 0, 49);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
-        List<Chat> chatList = new ArrayList<>();
-        for (String recentChat : recentChatList) {
-            ChatEntity chatEntity = objectMapper.readValue(recentChat, ChatEntity.class);
-            chatList.add(chatEntity.chatEntityToDto());
-        }
-
-        return chatList;
-    }
+//    public List<Chat> findRecentChattingByRoom_id(long room_id) throws JsonProcessingException {
+//        List<String> recentChatList = redisTemplate.opsForList().range("recent-chat:" + room_id, 0, 49);
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.registerModule(new JavaTimeModule());
+//
+//        List<Chat> chatList = new ArrayList<>();
+//        for (String recentChat : recentChatList) {
+//            ChatEntity chatEntity = objectMapper.readValue(recentChat, ChatEntity.class);
+//            chatList.add(chatEntity.chatEntityToDto());
+//        }
+//
+//        return chatList;
+//    }
 }

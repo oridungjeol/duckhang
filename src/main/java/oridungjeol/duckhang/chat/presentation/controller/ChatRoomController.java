@@ -18,8 +18,8 @@ public class ChatRoomController {
         this.chatService = chatService;
     }
 
-    @GetMapping("chat/recent/{room_id}")
-    public List<Chat> findRecentChattingByRoom_id(@PathVariable("room_id") long room_id) throws JsonProcessingException {
-        return chatService.findRecentChattingByRoom_id(room_id);
-    }
+//    @GetMapping("chat/recent/{room_id}")
+//    public List<Chat> findRecentChattingByRoom_id(@PathVariable("room_id") long room_id) throws JsonProcessingException {
+//        return chatService.findRecentChattingByRoom_id(room_id);
+//    }
 }
