@@ -67,8 +67,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .expiresAt(LocalDateTime.now().plusSeconds(refreshTokenValidityInMilliseconds / 1000))
                 .build());
 
+        Cookie uuidCookie = new Cookie("uuid", principal.getName());
+        uuidCookie.setPath("/");  // 모든 경로에서 접근 가능하도록
+        uuidCookie.setHttpOnly(false); // 자바스크립트에서 접근하려면 false
+        uuidCookie.setMaxAge(60 * 60 * 24); // 예: 1일 유지
+        response.addCookie(uuidCookie);
+
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
-        response.sendRedirect("http://localhost:3000/user/" + principal.getName());
+        response.sendRedirect(request.getHeader("referer"));
     }
 }
