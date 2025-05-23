@@ -25,7 +25,6 @@ public class ChatDocument {
     @Id
     private String id;
 
-//    @Enumerated(EnumType.STRING) // enum 이름을 문자열로 DB에 저장
     private MessageType type;
 
     private String authorUuid;
