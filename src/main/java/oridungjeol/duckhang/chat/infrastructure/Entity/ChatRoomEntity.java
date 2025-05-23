@@ -1,8 +1,6 @@
 package oridungjeol.duckhang.chat.infrastructure.Entity;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +13,11 @@ import lombok.Setter;
 @Setter
 @Table(name = "chatroom")
 public class ChatRoomEntity {
-    @EmbeddedId
-    private ChatRoomPK host_id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "room_id")
+    private Long room_id;
+
+    @Column(name = "uuid")
+    private String uuid;
 }

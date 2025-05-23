@@ -71,11 +71,11 @@ public class ChatService {
      * @param uuid
      * @return
      */
-    public List<Long> findChatRoomsByUuid(String uuid) {
-        List<Long> uuidList = chatRepository.findChatRoomByUuid(uuid);
-        if (uuidList == null) {
-            return Collections.emptyList();
+    public Long findChatRoomsByUuid(String uuid) {
+        Long room_id = chatRepository.findChatRoomByUuid(uuid);
+        if (room_id == null) {
+            return 0L;
         }
-        return uuidList;
+        return room_id;
     }
 }
