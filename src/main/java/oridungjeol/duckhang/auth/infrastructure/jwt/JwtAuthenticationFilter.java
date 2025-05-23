@@ -27,6 +27,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtParser jwtParser;
     private final JwtJpaRepository jwtJpaRepository;
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/login") ||
+                path.startsWith("/user") ||
+                path.startsWith("/auth") ||
+                path.startsWith("/oauth2") ||
+                path.startsWith("/user/*");
+    }
+
     /**
      * JWT 기반 인증 처리를 수행합니다.
      * <ul>
