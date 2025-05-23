@@ -55,6 +55,7 @@ services:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     depends_on:
       - elasticsearch
+
   nginx:
     image: nginx:latest
     container_name: nginx-proxy

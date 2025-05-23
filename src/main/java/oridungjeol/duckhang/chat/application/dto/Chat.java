@@ -3,16 +3,14 @@ package oridungjeol.duckhang.chat.application.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import oridungjeol.duckhang.chat.application.domain.MessageType;
-import oridungjeol.duckhang.chat.infrastructure.entity.ChatEntity;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
 public class Chat {
-    private int id;
+    private String id;
 
     private MessageType type;
 
@@ -24,14 +22,4 @@ public class Chat {
     private LocalDateTime created_at;
 
     private long room_id;
-
-    public ChatEntity toEntity() {
-        return ChatEntity.builder()
-                .type(type)
-                .author_uuid(author_uuid)
-                .content(content)
-                .created_at(created_at)
-                .room_id(room_id)
-                .build();
-    }
 }

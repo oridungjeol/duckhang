@@ -17,6 +17,6 @@ public class BoardSearchResultDto {
     private String content;
     private String imageUrl;
     private Integer price;
-    private OffsetDateTime createdAt;
+    private LocalDateTime createdAt;
     private BoardType boardType;
 }

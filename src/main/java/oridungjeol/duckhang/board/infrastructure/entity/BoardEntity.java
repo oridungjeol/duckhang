@@ -27,7 +27,7 @@ public class BoardEntity {
 
     private String imageUrl;
 
-    private OffsetDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
@@ -38,7 +38,7 @@ public class BoardEntity {
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
-        this.createdAt = OffsetDateTime.now();
+        this.createdAt = LocalDateTime.now();
         this.boardType = BoardType.PURCHASE;
     }
 

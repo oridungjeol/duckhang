@@ -81,7 +81,7 @@ public class PurchaseService {
                             .imageUrl(boardEntity.getImageUrl())
                             .price(purchaseEntity.getPrice())
                             .nickname(user.getNickname())
-                            .createdAt(boardEntity.getCreatedAt().toLocalDateTime())
+                            .createdAt(boardEntity.getCreatedAt())
                             .build();
                 })
                 .toList();
@@ -104,7 +104,7 @@ public class PurchaseService {
                 .content(boardEntity.getContent())
                 .imageUrl(boardEntity.getImageUrl())
                 .price(purchaseEntity.getPrice())
-                .createdAt(boardEntity.getCreatedAt().toLocalDateTime())
+                .createdAt(boardEntity.getCreatedAt())
                 .build();
     }
     @Transactional
