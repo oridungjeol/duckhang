@@ -1,12 +1,13 @@
 package oridungjeol.duckhang.board.search.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Builder;
 import lombok.Getter;
 import oridungjeol.duckhang.board.support.enums.BoardType;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Builder
 @Getter
@@ -16,7 +17,6 @@ public class BoardSearchResultDto {
     private String content;
     private String imageUrl;
     private Integer price;
-//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-//    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
     private BoardType boardType;
 }

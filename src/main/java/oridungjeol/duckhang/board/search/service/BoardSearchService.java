@@ -8,13 +8,15 @@ import oridungjeol.duckhang.board.search.dto.BoardSearchResultDto;
 import oridungjeol.duckhang.board.search.repository.BoardSearchRepository;
 import oridungjeol.duckhang.board.support.enums.BoardType;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
-public class SellSearchService {
+public class BoardSearchService {
 
     private final BoardSearchRepository boardSearchRepository;
 
-    public Page<BoardSearchResultDto> search(String keyword, Pageable pageable) {
-        return boardSearchRepository.searchBoard(BoardType.SELL, keyword, pageable);
+    public Page<BoardSearchResultDto> searchBoards(String keyword, Pageable pageable, BoardType boardType) {
+        return boardSearchRepository.searchBoard(keyword, pageable, Optional.ofNullable(boardType));
     }
 }

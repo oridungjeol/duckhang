@@ -2,6 +2,7 @@ package oridungjeol.duckhang.board.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import oridungjeol.duckhang.board.application.dto.TradeListDto;
@@ -22,6 +23,7 @@ import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PurchaseService {
@@ -52,7 +54,7 @@ public class PurchaseService {
                 .title(boardEntity.getTitle())
                 .content(boardEntity.getContent())
                 .imageUrl(boardEntity.getImageUrl())
-//                .createdAt(boardEntity.getCreatedAt())
+                .createdAt(boardEntity.getCreatedAt())
                 .boardType(boardEntity.getBoardType())
                 .price(purchaseEntity.getPrice())
                 .build();
@@ -79,7 +81,7 @@ public class PurchaseService {
                             .imageUrl(boardEntity.getImageUrl())
                             .price(purchaseEntity.getPrice())
                             .nickname(user.getNickname())
-                            .createdAt(boardEntity.getCreatedAt())
+                            .createdAt(boardEntity.getCreatedAt().toLocalDateTime())
                             .build();
                 })
                 .toList();
@@ -102,7 +104,7 @@ public class PurchaseService {
                 .content(boardEntity.getContent())
                 .imageUrl(boardEntity.getImageUrl())
                 .price(purchaseEntity.getPrice())
-                .createdAt(boardEntity.getCreatedAt())
+                .createdAt(boardEntity.getCreatedAt().toLocalDateTime())
                 .build();
     }
     @Transactional

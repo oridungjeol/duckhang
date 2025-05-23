@@ -7,7 +7,4 @@ import oridungjeol.duckhang.board.support.enums.BoardType;
 import java.util.List;
 
 public interface BoardDocumentRepository extends ElasticsearchRepository<BoardDocument, Long> {
-    List<BoardDocument> findByBoardTypeAndTitleOrContent(
-            BoardType boardType, String titleKeyword, String contentKeyword
-    );
 }

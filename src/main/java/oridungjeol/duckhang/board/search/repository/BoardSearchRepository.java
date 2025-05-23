@@ -14,6 +14,7 @@ import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,12 +22,18 @@ public class BoardSearchRepository {
 
     private final ElasticsearchTemplate elasticsearchTemplate;
 
-    public Page<BoardSearchResultDto> searchBoard(BoardType boardType, String keyword, Pageable pageable) {
-        Criteria boardTypeCriteria = Criteria.where("boardType").is(boardType.name());
-        Criteria keywordCriteria = new Criteria().or(Criteria.where("title").matches(keyword))
-                .or(Criteria.where("content").matches(keyword));
+    public Page<BoardSearchResultDto> searchBoard(String keyword, Pageable pageable, Optional<BoardType> boardType) {
+        Criteria criteria = new Criteria();
 
-        Criteria criteria = boardTypeCriteria.and(keywordCriteria);
+        if (keyword != null && !keyword.isBlank()) {
+            Criteria keywordCriteria = new Criteria().or(Criteria.where("title").matches(keyword))
+                    .or(Criteria.where("content").matches(keyword));
+            criteria = criteria.and(keywordCriteria);
+        }
+
+        if (boardType.isPresent()) {
+            criteria = criteria.and(Criteria.where("boardType").is(boardType.get().name()));
+        }
 
         CriteriaQuery query = new CriteriaQuery(criteria, pageable);
 
@@ -40,11 +47,12 @@ public class BoardSearchRepository {
                         .content(doc.getContent())
                         .imageUrl(doc.getImageUrl())
                         .price(doc.getPrice())
-//                        .createdAt(doc.getCreatedAt())
                         .boardType(doc.getBoardType())
+                        .createdAt(doc.getCreatedAt())
                         .build())
                 .toList();
 
         return new PageImpl<>(results, pageable, searchHits.getTotalHits());
     }
+
 }

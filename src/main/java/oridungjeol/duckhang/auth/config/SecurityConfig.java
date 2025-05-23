@@ -42,7 +42,8 @@ public class SecurityConfig {
                                 "/auth/register",
                                 "/auth/login",
                                 "/auth/**",
-                                "/login/**"
+                                "/login/**",
+                                "/board/search"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/user/*").permitAll()
                         .anyRequest().authenticated())

@@ -1,11 +1,13 @@
 package oridungjeol.duckhang.board.infrastructure.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.support.enums.BoardType;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Getter
@@ -25,18 +27,18 @@ public class BoardEntity {
 
     private String imageUrl;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
 
     @Builder
-    public BoardEntity(Long id, UUID authorUuid, String title, String content, String imageUrl, BoardType boardType) {
+    public BoardEntity(Long id, UUID authorUuid, String title, String content, String imageUrl, OffsetDateTime createdAt, BoardType boardType) {
         this.authorUuid = authorUuid;
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = OffsetDateTime.now();
         this.boardType = BoardType.PURCHASE;
     }
 
