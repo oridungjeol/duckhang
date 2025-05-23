@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.chat.application.dto.Chat;
@@ -48,8 +50,8 @@ public class ChatService {
     /**
      * 최신 50개의 메시지를 리턴
      */
-    public List<Chat> findChatByRoom_id(long room_id) throws JsonProcessingException {
-        List<ChatDocument> chatDocumentList = chatESRepository.findChatByRoomId(room_id);
+    public List<Chat> findChatByRoom_id(long room_id, Pageable pageable) throws JsonProcessingException {
+        Page<ChatDocument> chatDocumentList = chatESRepository.findChatByRoomId(room_id, pageable);
 
         List<Chat> chatList = new ArrayList<>();
         for (ChatDocument chatDocument: chatDocumentList) {

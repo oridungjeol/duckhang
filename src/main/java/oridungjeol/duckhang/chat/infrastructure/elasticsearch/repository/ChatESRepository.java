@@ -1,5 +1,7 @@
 package oridungjeol.duckhang.chat.infrastructure.elasticsearch.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -10,5 +12,5 @@ import java.util.List;
 @Repository
 public interface ChatESRepository extends ElasticsearchRepository<ChatDocument, Long> {
     @Query("{\"term\": {\"roomId\": ?0}}")
-    List<ChatDocument> findChatByRoomId(long roomId);
+    Page<ChatDocument> findChatByRoomId(long roomId, Pageable pageable);
 }
