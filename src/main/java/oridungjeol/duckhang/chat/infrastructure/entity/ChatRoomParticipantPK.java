@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.chat.infrastructure.Entity;
+package oridungjeol.duckhang.chat.infrastructure.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

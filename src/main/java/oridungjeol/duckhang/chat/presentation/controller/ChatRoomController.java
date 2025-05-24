@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import oridungjeol.duckhang.auth.domain.model.CustomPrincipal;
 import oridungjeol.duckhang.chat.application.dto.Chat;
+import oridungjeol.duckhang.chat.application.dto.ChatRoom;
 import oridungjeol.duckhang.chat.application.service.ChatService;
 
 import java.util.List;
@@ -43,16 +44,13 @@ public class ChatRoomController {
      * @return
      */
     @GetMapping("/chatroom")
-    public List<Long> findChatRoomByUuid(
+    public List<ChatRoom> findChatRoomByUuid(
             @AuthenticationPrincipal CustomPrincipal uuid
             ) {
         System.out.println("uuid is : " + uuid.getName());
-        Long room_id = chatService.findChatRoomByUuid(uuid.getName());
-        List<Long> room_idList = chatService.findChatRoomListByUuid(uuid.getName());
 
-        room_idList.add(room_id);
-
-        return room_idList;
+        List<ChatRoom> chatRoomList = chatService.findChatRoomByUuid(uuid.getName());
+        return chatRoomList;
     }
 
     //TODO 채팅방 만들기

@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.chat.infrastructure.Entity;
+package oridungjeol.duckhang.chat.infrastructure.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,4 +20,16 @@ public class ChatRoomEntity {
 
     @Column(name = "uuid")
     private String uuid;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "recent")
+    private String recent;
+
+    @Column(name = "board_id")
+    private Long board_id;
+
+    @Column(name = "type")
+    private String type;
 }

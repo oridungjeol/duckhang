@@ -6,16 +6,6 @@ import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocum
 
 @Component
 public class ChatMapper {
-//    public ChatEntity chatToEntity(Chat chat) {
-//        return ChatEntity.builder()
-//                .type(chat.getType())
-//                .author_uuid(chat.getAuthor_uuid())
-//                .content(chat.getContent())
-//                .created_at(chat.getCreated_at())
-//                .room_id(chat.getRoom_id())
-//                .build();
-//    }
-
     public Chat chatDocumentToDto(ChatDocument chatDocument) {
         return Chat.builder()
                 .type(chatDocument.getType())
