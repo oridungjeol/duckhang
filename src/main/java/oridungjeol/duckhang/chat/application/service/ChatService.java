@@ -67,15 +67,28 @@ public class ChatService {
     }
 
     /**
-     * 유저가 속한 채팅방 id 리스트를 반환
+     * 유저가 호스트인 채팅방 id를 반환
      * @param uuid
      * @return
      */
-    public Long findChatRoomsByUuid(String uuid) {
+    public Long findChatRoomByUuid(String uuid) {
         Long room_id = chatRepository.findChatRoomByUuid(uuid);
         if (room_id == null) {
             return 0L;
         }
         return room_id;
+    }
+
+    /**
+     * 유저가 참여자인 채팅방 id 리스트를 반환
+     * @param uuid
+     * @return
+     */
+    public List<Long> findChatRoomListByUuid(String uuid) {
+        List<Long> room_idList = chatRepository.findChatRoomListByUuid(uuid);
+        if (room_idList == null) {
+            return new ArrayList<>();
+        }
+        return room_idList;
     }
 }

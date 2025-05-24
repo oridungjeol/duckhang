@@ -12,4 +12,7 @@ import java.util.List;
 public interface ChatRepository extends JpaRepository<ChatRoomEntity, Long> {
     @Query("select c.room_id from ChatRoomEntity c where c.uuid = :uuid")
     Long findChatRoomByUuid(@Param("uuid") String uuid);
+
+    @Query("select c.participant_id.room_id from ChatRoomParticipantEntity c where c.participant_id.uuid = :uuid")
+    List<Long> findChatRoomListByUuid(@Param("uuid") String uuid);
 }

@@ -38,18 +38,22 @@ public class ChatRoomController {
     }
 
     /**
-     * 유저가 호스트인 채팅방 반환
+     * 유저가 호스트인 채팅방, 참가자인 채팅방 반환
      * @param uuid
      * @return
      */
     @GetMapping("/chatroom")
-    public Long findChatRoomByUuid(
+    public List<Long> findChatRoomByUuid(
             @AuthenticationPrincipal CustomPrincipal uuid
             ) {
-        return chatService.findChatRoomsByUuid(uuid.getName());
-    }
+        System.out.println("uuid is : " + uuid.getName());
+        Long room_id = chatService.findChatRoomByUuid(uuid.getName());
+        List<Long> room_idList = chatService.findChatRoomListByUuid(uuid.getName());
 
-    //TODO 유저가 참가자인 채팅방 반환
+        room_idList.add(room_id);
+
+        return room_idList;
+    }
 
     //TODO 채팅방 만들기
 //    @PostMapping("/chatroom")
