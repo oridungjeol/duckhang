@@ -1,10 +1,12 @@
 package oridungjeol.duckhang.chat.infrastructure.mapper;
 
+import org.springframework.stereotype.Component;
 import oridungjeol.duckhang.chat.application.dto.ChatRoom;
 import oridungjeol.duckhang.chat.application.dto.ChatRoomParticipant;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatRoomEntity;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatRoomParticipantEntity;
 
+@Component
 public class ChatRoomMapper {
     /**
      * chatroomEntity를 chatroomDto로 변환

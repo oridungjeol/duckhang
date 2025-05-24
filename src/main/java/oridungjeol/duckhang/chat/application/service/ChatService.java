@@ -13,6 +13,7 @@ import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.application.dto.ChatRoom;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocument;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.repository.ChatESRepository;
+
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatRoomEntity;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatRoomParticipantEntity;
 import oridungjeol.duckhang.chat.infrastructure.mapper.ChatMapper;
@@ -20,7 +21,6 @@ import oridungjeol.duckhang.chat.infrastructure.mapper.ChatRoomMapper;
 import oridungjeol.duckhang.chat.infrastructure.repository.ChatRepository;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
