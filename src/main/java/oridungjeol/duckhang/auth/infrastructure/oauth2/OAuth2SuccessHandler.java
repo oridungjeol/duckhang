@@ -49,15 +49,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String jwtAccessToken = jwtGenerator.createAccessToken(principal);
         Cookie accessCookie = new Cookie("accessToken", jwtAccessToken);
-        accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(true);
+        accessCookie.setHttpOnly(false);
+        accessCookie.setSecure(false);
         accessCookie.setPath("/");
         accessCookie.setMaxAge((int) accessTokenValidityInMilliseconds / 1000);
 
         String jwtRefreshToken = jwtGenerator.createRefreshToken(principal);
         Cookie refreshCookie = new Cookie("refreshToken", jwtRefreshToken);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(true);
+        refreshCookie.setHttpOnly(false);
+        refreshCookie.setSecure(false);
         refreshCookie.setPath("/");
         refreshCookie.setMaxAge((int) refreshTokenValidityInMilliseconds / 1000);
 
@@ -71,10 +71,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         uuidCookie.setPath("/");  // 모든 경로에서 접근 가능하도록
         uuidCookie.setHttpOnly(false); // 자바스크립트에서 접근하려면 false
         uuidCookie.setMaxAge(60 * 60 * 24); // 예: 1일 유지
-        response.addCookie(uuidCookie);
 
+        response.addCookie(uuidCookie);
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
-        response.sendRedirect(request.getHeader("referer"));
+//        response.sendRedirect(request.getHeader("referer"));
     }
 }

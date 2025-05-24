@@ -6,11 +6,11 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import oridungjeol.duckhang.auth.domain.model.CustomPrincipal;
+import oridungjeol.duckhang.auth.domain.model.JwtAuthenticationToken;
 import oridungjeol.duckhang.auth.infrastructure.repository.JwtJpaRepository;
 
 import java.io.IOException;
@@ -31,10 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
         return path.startsWith("/login") ||
-                path.startsWith("/user") ||
                 path.startsWith("/auth") ||
-                path.startsWith("/oauth2") ||
-                path.startsWith("/user/*");
+                path.startsWith("/oauth2");
     }
 
     /**
@@ -55,16 +53,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         Map<String, String> token = resolveToken(request);
         if (token.isEmpty()) {
-            response.sendRedirect("http://localhost:3000/login");
+//            response.sendRedirect(request.getHeader("referer"));
         } else {
             String accessToken = token.get("accessToken");
-            String refreshToken = token.get("refreshToken");
-            if (!jwtParser.validateToken(accessToken) && jwtJpaRepository.existsByRefreshToken(refreshToken)) {
-                accessToken = jwtGenerator.createAccessToken(jwtParser.getPrincipal(refreshToken));
+            if (jwtParser.validateToken(accessToken)) {
+                authenticate(accessToken);
             }
-            authenticate(accessToken);
-            filterChain.doFilter(request, response);
         }
+        filterChain.doFilter(request, response);
     }
 
     /**
@@ -81,8 +77,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         for (Cookie cookie : request.getCookies()) {
             if ("accessToken".equals(cookie.getName())) {
                 tokens.put("accessToken", cookie.getValue());
-            } else if ("refreshToken".equals(cookie.getName())) {
-                tokens.put("refreshToken", cookie.getValue());
             }
         }
 
@@ -96,11 +90,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     private void authenticate(String token) {
         CustomPrincipal customPrincipal = new CustomPrincipal(UUID.fromString(jwtParser.getUuid(token)), jwtParser.getNickname(token));
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                customPrincipal,
-                null,
-                customPrincipal.getAuthorities()
-        );
+
+        JwtAuthenticationToken authentication = new JwtAuthenticationToken(customPrincipal);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
