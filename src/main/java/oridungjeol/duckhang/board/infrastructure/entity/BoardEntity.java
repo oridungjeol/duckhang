@@ -33,13 +33,13 @@ public class BoardEntity {
     private BoardType boardType;
 
     @Builder
-    public BoardEntity(Long id, UUID authorUuid, String title, String content, String imageUrl, OffsetDateTime createdAt, BoardType boardType) {
+    public BoardEntity(Long id, UUID authorUuid, String title, String content, String imageUrl, LocalDateTime createdAt, BoardType boardType) {
         this.authorUuid = authorUuid;
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
         this.createdAt = LocalDateTime.now();
-        this.boardType = BoardType.PURCHASE;
+        this.boardType =boardType;
     }
 
     public Board toDomain() {
