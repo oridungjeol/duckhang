@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.board.infrastructure.entity.RentalEntity;
-import oridungjeol.duckhang.board.infrastructure.repository.RentalRepository;
-import oridungjeol.duckhang.board.infrastructure.repository.SellRepository;
+import oridungjeol.duckhang.board.infrastructure.repository.PurchaseJpaRepository;
+import oridungjeol.duckhang.board.infrastructure.repository.RentalJpaRepository;
+import oridungjeol.duckhang.board.infrastructure.repository.SellJpaRepository;
 import oridungjeol.duckhang.payment.infrastructure.TossClient;
 import oridungjeol.duckhang.payment.infrastructure.adapter.PaymentAdapter;
 import oridungjeol.duckhang.payment.infrastructure.jparepository.entity.PaymentEntity;
@@ -20,17 +21,17 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private final SellRepository sellRepository;
-    private final RentalRepository rentalRepository;
-//    private final SellRepository purchaseRepository;
-//    private final RentalRepository delegateRepository;
+    private final SellJpaRepository sellJpaRepository;
+    private final RentalJpaRepository rentalJpaRepository;
+    private final PurchaseJpaRepository purchaseJpaRepository;
+    private final RentalJpaRepository delegateJpaRepository;
     private final TossClient tossClient;
     private final PaymentAdapter paymentAdapter;
 
     /**
      * 주문 생성
      */
-    public String createOrderId(int boardId, String type) {
+    public String createOrderId(Long boardId, String type) {
         int price = getPriceByTypeAndBoardId(type, boardId);
         String orderId = OrderIdGenerator.generateOrderId();
 
@@ -87,7 +88,7 @@ public class PaymentService {
             throw new IllegalStateException("이미 부분 환불이 완료된 결제입니다. 중복 환불은 불가능합니다.");
         }
 
-        RentalEntity rental = rentalRepository.findByBoardId(payment.getBoardId())
+        RentalEntity rental = rentalJpaRepository.findByBoardId(payment.getBoardId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 [대여] 게시글이 없습니다."));
 
         int deposit = rental.getDeposit();
@@ -127,19 +128,19 @@ public class PaymentService {
     /**
      * 게시글 타입 + boardId로 결제 금액 조회
      */
-    private int getPriceByTypeAndBoardId(String type, Integer boardId) {
+    private int getPriceByTypeAndBoardId(String type, Long boardId) {
         return switch (type.toUpperCase()) {
-            case "SELL" -> sellRepository.findByBoardId(boardId)
+            case "SELL" -> sellJpaRepository.findByBoardId(boardId)
                     .orElseThrow(() -> new IllegalArgumentException("[판매] 게시글이 존재하지 않습니다."))
                     .getPrice();
-//            case "PURCHASE" -> purchaseRepository.findByBoardId(boardId)
-//                    .orElseThrow(() -> new IllegalArgumentException("[구매] 게시글이 존재하지 않습니다."))
-//                    .getPrice();
-//            case "DELEGATE" -> delegateRepository.findByBoardId(boardId)
-//                    .orElseThrow(() -> new IllegalArgumentException("[대리] 게시글이 존재하지 않습니다."))
-//                    .getPrice();
+            case "PURCHASE" -> purchaseJpaRepository.findByBoardId(boardId)
+                    .orElseThrow(() -> new IllegalArgumentException("[구매] 게시글이 존재하지 않습니다."))
+                    .getPrice();
+            case "DELEGATE" -> delegateJpaRepository.findByBoardId(boardId)
+                    .orElseThrow(() -> new IllegalArgumentException("[대리] 게시글이 존재하지 않습니다."))
+                    .getPrice();
             case "RENTAL" -> {
-                RentalEntity rental = rentalRepository.findByBoardId(boardId)
+                RentalEntity rental = rentalJpaRepository.findByBoardId(boardId)
                         .orElseThrow(() -> new IllegalArgumentException("[대여] 게시글이 존재하지 않습니다."));
                 yield rental.getPrice() + rental.getDeposit(); // 가격 + 보증금
             }

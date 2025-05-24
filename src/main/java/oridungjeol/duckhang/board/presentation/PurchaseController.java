@@ -29,6 +29,7 @@ public class PurchaseController {
         return ResponseEntity.ok(id);
     }
 
+
     @GetMapping
     public ResponseEntity<List<TradeListDto>> findAll() {
         List<TradeListDto> purchases = purchaseService.getAllPurchases();

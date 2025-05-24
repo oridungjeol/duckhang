@@ -14,7 +14,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/payment")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
 public class OrderController {
 
     private final PaymentService paymentService;
@@ -28,7 +27,7 @@ public class OrderController {
         }
 
         try {
-            int boardId = Integer.parseInt(request.get("boardId").toString());
+            Long boardId = Long.valueOf(request.get("boardId").toString());
             String type = request.get("type").toString();
 
             String orderId = paymentService.createOrderId(boardId, type);

@@ -10,7 +10,6 @@ import oridungjeol.duckhang.payment.presentation.dto.PaymentRequestDto;
 
 @RestController
 @RequestMapping("/payment")
-@CrossOrigin("http://localhost:3000")
 @RequiredArgsConstructor
 
 public class PaymentController {
