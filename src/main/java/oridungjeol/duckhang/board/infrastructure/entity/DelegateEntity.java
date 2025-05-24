@@ -9,8 +9,8 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
-@Table(name = "rental")
-public class RentalEntity {
+@Table(name = "delegate")
+public class DelegateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,8 +20,7 @@ public class RentalEntity {
 
     private int price;
 
-    private int deposit;
-
-    private LocalDate period;
+    @Column(name = "appointment")
+    private LocalDate appointment;
 
 }

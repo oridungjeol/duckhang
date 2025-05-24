@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/payment")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
 public class PriceController {
 
     private final List<PriceProvider> priceProviders;
@@ -19,7 +18,7 @@ public class PriceController {
     @GetMapping("/price/{type}/{boardId}")
     public ResponseEntity<?> getPrice(
             @PathVariable String type,
-            @PathVariable int boardId
+            @PathVariable Long boardId
     ) {
         return priceProviders.stream()
                 .filter(p -> p.supports(type))

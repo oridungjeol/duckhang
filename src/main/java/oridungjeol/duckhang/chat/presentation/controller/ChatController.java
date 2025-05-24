@@ -15,6 +15,7 @@ public class ChatController {
 
     @MessageMapping("chat/{room_id}")
     public void sendMessage(@DestinationVariable("room_id") long room_id, Chat message) throws Exception {
+        System.out.println("controller");
         chatService.sendMessage(message);
     }
 }

@@ -21,7 +21,6 @@ public class PaymentEntity {
     @Column(name = "order_id")
     private String orderId;
 
-
     @Column(name = "payment_key")
     private String paymentKey;
 
@@ -35,7 +34,7 @@ public class PaymentEntity {
     private LocalDateTime paidAt;
 
     @Column(name = "board_id")
-    private Integer boardId;
+    private Long boardId;
 
     @Column(name = "refunded_at")
     private LocalDateTime refundedAt;
@@ -43,6 +42,6 @@ public class PaymentEntity {
     private boolean partiallyRefunded = false;
 
 
-    public PaymentEntity(String orderId, String paymentKey, int amount, int boardId, String type) {
+    public PaymentEntity(String orderId, String paymentKey, int amount, Long boardId, String type) {
     }
 }
