@@ -1,6 +1,5 @@
 package oridungjeol.duckhang.auth.config;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,30 +41,24 @@ public class SecurityConfig {
                                 "/auth/register",
                                 "/auth/login",
                                 "/auth/**",
-                                "/login/**"
+                                "/login/**",
+                                "/favicon.ico",
+                                "/static/**",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/error"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/user/*").permitAll()
                         .anyRequest().authenticated())
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            String requestedWith = request.getHeader("X-Requested-With");
-                            boolean isAjax = "XMLHttpRequest".equals(requestedWith);
-
-                            if (isAjax) {
-                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                            } else {
-                                response.sendRedirect("/oauth2/authorization/kakao");
-                            }
-                        })
-                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 ->
                         oauth2
                                 .userInfoEndpoint(userInfo ->
                                         userInfo
                                                 .userService(customOAuth2UserService)
                                 )
-                                .successHandler(oAuth2SuccessHandler)
-                ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                                .successHandler(oAuth2SuccessHandler));
 
         return http.build();
     }
