@@ -1,14 +1,19 @@
 package oridungjeol.duckhang.review.application.usecase;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import oridungjeol.duckhang.review.infrastructure.converter.ReviewConverter;
 import oridungjeol.duckhang.review.application.dto.ReviewRequestDto;
-import oridungjeol.duckhang.review.application.service.ReviewValidationService;
+import oridungjeol.duckhang.review.application.dto.ReviewResponseDto;
 import oridungjeol.duckhang.review.application.factory.ReviewFactory;
+import oridungjeol.duckhang.review.application.service.ReviewValidationService;
 import oridungjeol.duckhang.review.domain.model.Review;
+import oridungjeol.duckhang.review.infrastructure.converter.ReviewConverter;
 import oridungjeol.duckhang.review.infrastructure.repository.ReviewJpaRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -40,5 +45,26 @@ public class ReviewUseCase {
         reviewJpaRepository.save(reviewEntity);
 
         return reviewEntity.getTargetId();
+    }
+
+    /**
+     * 특정 사용자에 대한 리뷰를 불러옵니다.
+     *
+     * @param targetId 조회할 대상의 uuid
+     * @param pageNumber 조회할 리뷰의 페이지
+     * @param pageSize 조회할 리뷰의 갯수
+     * @return 리뷰 목록
+     */
+    public List<ReviewResponseDto> getReviews(String targetId, int pageNumber, int pageSize) {
+        return reviewJpaRepository
+                .findByTargetId(UUID.fromString(targetId), PageRequest.of(
+                                pageNumber,
+                                pageSize,
+                                Sort.by("createdAt").descending()
+                        )
+                )
+                .stream()
+                .map(ReviewFactory::toReviewResponse)
+                .toList();
     }
 }
