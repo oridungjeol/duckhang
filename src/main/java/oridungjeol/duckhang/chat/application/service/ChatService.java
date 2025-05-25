@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.auth.infrastructure.jwt.JwtParser;
 import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
+import oridungjeol.duckhang.chat.application.domain.MessageType;
 import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.application.dto.ChatParam;
 import oridungjeol.duckhang.chat.application.dto.ChatRoom;
@@ -22,6 +23,7 @@ import oridungjeol.duckhang.chat.infrastructure.mapper.ChatMapper;
 import oridungjeol.duckhang.chat.infrastructure.mapper.ChatRoomMapper;
 import oridungjeol.duckhang.chat.infrastructure.repository.ChatRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,6 +124,17 @@ public class ChatService {
                 .build();
 
         ChatRoomEntity response = chatRepository.save(chatRoomEntity);
+
+        ChatDocument chatDocument = ChatDocument.builder()
+                .type(MessageType.SYSTEM)
+                .authorUuid(uuid)
+                .content(response.getName() + "님과의 전설적인 대화가 막 시작되었어요.")
+                .createdAt(LocalDateTime.now())
+                .roomId(response.getRoom_id())
+                .build();
+
+        chatESRepository.save(chatDocument);
+
         ChatRoom chatRoomInfo = chatRoomMapper.chatRoomToDto(response);
         return chatRoomInfo;
     }
