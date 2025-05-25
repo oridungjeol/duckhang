@@ -1,0 +1,34 @@
+package oridungjeol.duckhang.board.infrastructure.adapter;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import oridungjeol.duckhang.board.application.port.out.PurchaseRepository;
+import oridungjeol.duckhang.board.domain.Purchase;
+import oridungjeol.duckhang.board.infrastructure.entity.PurchaseEntity;
+import oridungjeol.duckhang.board.infrastructure.repository.PurchaseJpaRepository;
+import oridungjeol.duckhang.board.support.mapper.PurchaseMapper;
+
+import java.util.Optional;
+
+@Component
+@RequiredArgsConstructor
+public class PurchaseRepositoryAdapter implements PurchaseRepository {
+    private final PurchaseJpaRepository purchaseJpaRepository;
+    @Override
+    public Purchase save(Purchase purchase) {
+        PurchaseEntity entity = PurchaseMapper.toEntity(purchase);
+        return PurchaseMapper.toDomain(purchaseJpaRepository.save(entity));
+    }
+
+    @Override
+    public Optional<Purchase> findByBoardId(Long boardId) {
+        return purchaseJpaRepository.findByBoardId(boardId)
+                .map(PurchaseMapper::toDomain);
+    }
+
+    @Override
+    public void deleteByBoardId(Long boardId) {
+        purchaseJpaRepository.findByBoardId(boardId)
+                .ifPresent(purchaseJpaRepository::delete);
+    }
+}

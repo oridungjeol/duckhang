@@ -5,10 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import oridungjeol.duckhang.auth.domain.model.CustomPrincipal;
-import oridungjeol.duckhang.board.application.dto.TradeListDto;
-import oridungjeol.duckhang.board.application.dto.TradeDetailDto;
 import oridungjeol.duckhang.board.application.dto.RequestDto;
-import oridungjeol.duckhang.board.application.service.PurchaseService;
+import oridungjeol.duckhang.board.application.dto.TradeDetailDto;
+import oridungjeol.duckhang.board.application.dto.TradeListDto;
+import oridungjeol.duckhang.board.application.port.in.PurchaseBoardUseCase;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequestMapping("/board/purchase")
 @RequiredArgsConstructor
 public class PurchaseController {
-    private final PurchaseService purchaseService;
+    private final PurchaseBoardUseCase purchaseBoardUseCase;
 
     @PostMapping
     public ResponseEntity<Long> createPurchase(
@@ -25,14 +25,14 @@ public class PurchaseController {
             @RequestBody RequestDto requestDto
     ) {
         String uuid = principal.getName();
-        Long id = purchaseService.createPurchase(UUID.fromString(uuid), requestDto);
+        Long id = purchaseBoardUseCase.createBoard(UUID.fromString(uuid), requestDto);
         return ResponseEntity.ok(id);
     }
 
 
     @GetMapping
     public ResponseEntity<List<TradeListDto>> findAll() {
-        List<TradeListDto> purchases = purchaseService.getAllPurchases();
+        List<TradeListDto> purchases = purchaseBoardUseCase.getAllBoards();
         return ResponseEntity.ok(purchases);
     }
 
@@ -40,7 +40,7 @@ public class PurchaseController {
     public ResponseEntity<TradeDetailDto> findById(
             @PathVariable Long purchaseId
     ) {
-        TradeDetailDto purchase = purchaseService.getPurchaseDetail(purchaseId);
+        TradeDetailDto purchase = purchaseBoardUseCase.getDetailBoard(purchaseId);
         return ResponseEntity.ok(purchase);
     }
 
@@ -51,7 +51,7 @@ public class PurchaseController {
             @RequestBody RequestDto requestDto
     ) {
         String uuid = principal.getName();
-        Long updatedId = purchaseService.updatePurchase(UUID.fromString(uuid), purchaseId, requestDto);
+        Long updatedId = purchaseBoardUseCase.updateBoard( purchaseId, UUID.fromString(uuid), requestDto);
         return ResponseEntity.ok(updatedId);
     }
 
@@ -61,7 +61,7 @@ public class PurchaseController {
             @PathVariable Long purchaseId
     ) {
         String uuid = principal.getName();
-        purchaseService.deletePurchase(UUID.fromString(uuid),purchaseId);
+        purchaseBoardUseCase.deleteBoard(UUID.fromString(uuid),purchaseId);
         return ResponseEntity.ok().build();
     }
 

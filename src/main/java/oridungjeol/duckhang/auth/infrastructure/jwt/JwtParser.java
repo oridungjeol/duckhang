@@ -78,7 +78,7 @@ public class JwtParser {
         Date issuedAt = getClaims(token).getIssuedAt();
         Date expiration = getClaims(token).getExpiration();
         Date now = Date.from(Instant.now());
-        return issuedAt.after(now) && expiration.before(now);
+        return issuedAt.before(now) && expiration.after(now);
     }
 
     /**
