@@ -9,7 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.auth.infrastructure.jwt.JwtParser;
+import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
 import oridungjeol.duckhang.chat.application.dto.Chat;
+import oridungjeol.duckhang.chat.application.dto.ChatParam;
 import oridungjeol.duckhang.chat.application.dto.ChatRoom;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocument;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.repository.ChatESRepository;
@@ -43,7 +45,7 @@ public class ChatService {
 
     /**
      * 메시지 저장
-     * @param message
+     * @param message 1개의 채팅 메시지 데이터
      * @throws Exception
      */
     public void sendMessage(Chat message) throws Exception {
@@ -64,10 +66,10 @@ public class ChatService {
     }
 
     /**
-     * 최신 50개의 메시지를 리턴
-     * @param room_id
-     * @param pageable
-     * @return
+     * 최신 50개의 메시지를 리턴합니다
+     * @param room_id 채팅방 고유 번호
+     * @param pageable pageable객체
+     * @return 최신 50개의 채팅 데이터
      * @throws JsonProcessingException
      */
     public List<Chat> findChatByRoom_id(long room_id, Pageable pageable) throws JsonProcessingException {
@@ -83,8 +85,8 @@ public class ChatService {
 
     /**
      * 유저가 참여중인 채팅방 정보를 반환
-     * @param uuid
-     * @return
+     * @param uuid 유저 고유 번호
+     * @return 채팅방 리스트
      */
     public List<ChatRoom> findChatRoomByUuid(String uuid) {
         List<ChatRoomEntity> chatRoomEntities = chatRepository.findChatRoomByUuid(uuid);
@@ -103,5 +105,24 @@ public class ChatService {
         chatRoomList.addAll(chatRoomParticipantList);
 
         return chatRoomList;
+    }
+
+    /**
+     * 새로운 채팅방을 생성하고 생성된 채팅방 객체를 리턴합니다.
+     * @param uuid 유저 고유 번호
+     * @param chatParam 채팅방 이름, 게시글 고유 번호, 게시글 타입
+     * @return 채팅방 정보
+     */
+    public ChatRoom createChatRoom(String uuid, ChatParam chatParam) {
+        ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
+                .uuid(uuid)
+                .name(chatParam.getName())
+                .board_id(chatParam.getBoard_id())
+                .type(chatParam.getType())
+                .build();
+
+        ChatRoomEntity response = chatRepository.save(chatRoomEntity);
+        ChatRoom chatRoomInfo = chatRoomMapper.chatRoomToDto(response);
+        return chatRoomInfo;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import oridungjeol.duckhang.auth.domain.model.CustomPrincipal;
 import oridungjeol.duckhang.chat.application.dto.Chat;
+import oridungjeol.duckhang.chat.application.dto.ChatParam;
 import oridungjeol.duckhang.chat.application.dto.ChatRoom;
 import oridungjeol.duckhang.chat.application.service.ChatService;
 
@@ -25,9 +26,9 @@ public class ChatRoomController {
 
     /**
      * 최근 대화 50개 불러오기
-     * @param room_id
-     * @param pageRequest
-     * @return
+     * @param room_id 채팅방 고유번호
+     * @param pageRequest pageable 객체
+     * @return 최근 50개 채팅 데이터 pageable 객체
      * @throws JsonProcessingException
      */
     @GetMapping("/recent/{room_id}")
@@ -41,7 +42,7 @@ public class ChatRoomController {
     /**
      * 유저가 호스트인 채팅방, 참가자인 채팅방 반환
      * @param uuid
-     * @return
+     * @return 채팅방 리스트
      */
     @GetMapping("/chatroom")
     public List<ChatRoom> findChatRoomByUuid(
@@ -53,13 +54,19 @@ public class ChatRoomController {
         return chatRoomList;
     }
 
-    //TODO 채팅방 만들기
-//    @PostMapping("/chatroom")
-//    public void createChatRoom(
-//            @AuthenticationPrincipal CustomPrincipal uuid
-//    ) {
-//        chatService.createChatRoom(uuid.getName());
-//    }
+    /**
+     * 새로운 채팅방을 생성합니다.
+     * @param uuid 유저 고유 번호
+     * @param chatParam 채팅방 생성 시 필요한 데이터(채팅방 이름, 게시글 고유 번호, 게시글 타입)
+     * @return 채팅방 객체
+     */
+    @PostMapping("/create")
+    public ChatRoom createChatRoom(
+            @AuthenticationPrincipal CustomPrincipal uuid,
+            @RequestBody ChatParam chatParam
+    ) {
+        return chatService.createChatRoom(uuid.getName(), chatParam);
+    }
 
     //TODO 채팅방 참가하기
 }
