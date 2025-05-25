@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board.application.dto;
+package oridungjeol.duckhang.board.presentation.dto;
 
 import lombok.Getter;
 

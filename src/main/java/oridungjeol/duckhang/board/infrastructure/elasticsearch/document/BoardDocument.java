@@ -3,7 +3,7 @@ package oridungjeol.duckhang.board.infrastructure.elasticsearch.document;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
-import oridungjeol.duckhang.board.support.enums.BoardType;
+import oridungjeol.duckhang.board.domain.BoardType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

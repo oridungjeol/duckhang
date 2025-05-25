@@ -2,7 +2,7 @@ package oridungjeol.duckhang.board.infrastructure.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import oridungjeol.duckhang.board.infrastructure.entity.BoardEntity;
-import oridungjeol.duckhang.board.support.enums.BoardType;
+import oridungjeol.duckhang.board.domain.BoardType;
 
 import java.util.List;
 

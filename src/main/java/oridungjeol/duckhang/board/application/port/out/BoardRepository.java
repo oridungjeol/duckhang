@@ -1,7 +1,7 @@
 package oridungjeol.duckhang.board.application.port.out;
 
 import oridungjeol.duckhang.board.domain.Board;
-import oridungjeol.duckhang.board.support.enums.BoardType;
+import oridungjeol.duckhang.board.domain.BoardType;
 
 import java.util.List;
 import java.util.Optional;

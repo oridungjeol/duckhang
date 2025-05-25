@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board.support.enums;
+package oridungjeol.duckhang.board.domain;
 
 public enum BoardType {
     PURCHASE,    // 구매

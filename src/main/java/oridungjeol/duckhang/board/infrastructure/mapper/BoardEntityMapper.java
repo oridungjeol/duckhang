@@ -1,12 +1,11 @@
-package oridungjeol.duckhang.board.support.mapper;
+package oridungjeol.duckhang.board.infrastructure.mapper;
 
-import oridungjeol.duckhang.board.application.dto.RequestDto;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.infrastructure.entity.BoardEntity;
 
 import java.time.LocalDateTime;
 
-public class BoardMapper {
+public class BoardEntityMapper {
     public static Board toDomain(BoardEntity entity) {
         return new Board(
                 entity.getId(),

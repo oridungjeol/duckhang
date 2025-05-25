@@ -1,7 +1,6 @@
 package oridungjeol.duckhang.board.domain;
 
 import lombok.Getter;
-import oridungjeol.duckhang.board.support.enums.BoardType;
 
 import javax.naming.NoPermissionException;
 import java.time.LocalDateTime;

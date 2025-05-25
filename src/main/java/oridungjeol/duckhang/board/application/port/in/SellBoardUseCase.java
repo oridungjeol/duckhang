@@ -1,6 +1,5 @@
 package oridungjeol.duckhang.board.application.port.in;
 
-import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.board.presentation.dto.RequestDto;
 import oridungjeol.duckhang.board.application.dto.TradeDetailDto;
 import oridungjeol.duckhang.board.application.dto.TradeListDto;
@@ -8,8 +7,7 @@ import oridungjeol.duckhang.board.application.dto.TradeListDto;
 import java.util.List;
 import java.util.UUID;
 
-@Service
-public interface PurchaseBoardUseCase {
+public interface SellBoardUseCase {
     Long createBoard(UUID authorUuid, RequestDto requestDto);
     TradeDetailDto getDetailBoard(Long boardId);
     List<TradeListDto> getAllBoards();
