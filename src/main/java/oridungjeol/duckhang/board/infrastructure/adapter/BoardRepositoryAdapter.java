@@ -6,8 +6,8 @@ import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.infrastructure.entity.BoardEntity;
 import oridungjeol.duckhang.board.infrastructure.repository.BoardJpaRepository;
-import oridungjeol.duckhang.board.support.enums.BoardType;
-import oridungjeol.duckhang.board.support.mapper.BoardMapper;
+import oridungjeol.duckhang.board.domain.BoardType;
+import oridungjeol.duckhang.board.infrastructure.mapper.BoardEntityMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,25 +23,25 @@ public class BoardRepositoryAdapter implements BoardRepository {
 
         if (board.getId() != null) {
             entity = boardJpaRepository.findById(board.getId())
-                    .map(e -> BoardMapper.toUpdatedEntity(e, board))
-                    .orElse(BoardMapper.toEntity(board));
+                    .map(e -> BoardEntityMapper.toUpdatedEntity(e, board))
+                    .orElse(BoardEntityMapper.toEntity(board));
         } else {
-            entity = BoardMapper.toEntity(board);
+            entity = BoardEntityMapper.toEntity(board);
         }
 
         BoardEntity saved = boardJpaRepository.save(entity);
-        return BoardMapper.toDomain(saved);
+        return BoardEntityMapper.toDomain(saved);
     }
     @Override
     public Optional<Board> findById(Long id) {
         return boardJpaRepository.findById(id)
-                .map(BoardMapper::toDomain);
+                .map(BoardEntityMapper::toDomain);
     }
 
     @Override
     public List<Board> findAllByBoardType(BoardType boardType) {
         return boardJpaRepository.findAllByBoardType(boardType).stream()
-                .map(BoardMapper::toDomain)
+                .map(BoardEntityMapper::toDomain)
                 .toList();
     }
 

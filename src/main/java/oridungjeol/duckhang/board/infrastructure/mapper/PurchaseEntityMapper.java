@@ -1,9 +1,9 @@
-package oridungjeol.duckhang.board.support.mapper;
+package oridungjeol.duckhang.board.infrastructure.mapper;
 
 import oridungjeol.duckhang.board.domain.Purchase;
 import oridungjeol.duckhang.board.infrastructure.entity.PurchaseEntity;
 
-public class PurchaseMapper {
+public class PurchaseEntityMapper {
     public static Purchase toDomain(PurchaseEntity entity) {
         return new Purchase(entity.getBoardId(), entity.getPrice());
     }

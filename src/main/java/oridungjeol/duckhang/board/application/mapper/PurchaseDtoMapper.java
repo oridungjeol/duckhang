@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board.support.mapper;
+package oridungjeol.duckhang.board.application.mapper;
 
 import oridungjeol.duckhang.board.application.dto.TradeDetailDto;
 import oridungjeol.duckhang.board.application.dto.TradeListDto;
@@ -6,7 +6,7 @@ import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.domain.Purchase;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 
-public class DtoMapper {
+public class PurchaseDtoMapper {
     public static TradeListDto toTradeListDto(Board board, Purchase purchase, User user) {
         return TradeListDto.builder()
                 .id(board.getId())
