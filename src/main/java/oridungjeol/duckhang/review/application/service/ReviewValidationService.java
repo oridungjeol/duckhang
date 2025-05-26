@@ -8,7 +8,7 @@ import oridungjeol.duckhang.review.infrastructure.repository.ReviewJpaRepository
 
 @Service
 @RequiredArgsConstructor
-public class ReviewService {
+public class ReviewValidationService {
 
     private final ReviewJpaRepository reviewJpaRepository;
     private final PaymentRepository paymentJpaRepository;
