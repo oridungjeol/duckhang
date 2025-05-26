@@ -40,5 +40,14 @@ public class ReviewController {
     ) {
         return ResponseEntity.ok(reviewUseCase.getReviews(userId, pageNumber, pageSize));
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<ReviewResponseDto>> getReviews(
+            @PathVariable String userId,
+            @RequestParam int pageNumber,
+            @RequestParam int pageSize
+    ) {
+        return ResponseEntity.ok(reviewUseCase.getReviews(userId, pageNumber, pageSize));
+    }
 }
 
