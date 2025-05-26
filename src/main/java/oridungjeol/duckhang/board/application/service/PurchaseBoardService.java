@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import oridungjeol.duckhang.board.infrastructure.redis.BoardStreamPublisher;
 import oridungjeol.duckhang.board.presentation.dto.RequestDto;
 import oridungjeol.duckhang.board.application.dto.TradeDetailDto;
 import oridungjeol.duckhang.board.application.dto.TradeListDto;
@@ -30,7 +31,7 @@ public class PurchaseBoardService implements PurchaseBoardUseCase {
     private final PurchaseRepository purchaseRepository;
     private final UserJpaRepository userJpaRepository;
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final BoardStreamPublisher boardStreamPublisher;
 
     @Override
     public Long createBoard(
@@ -43,17 +44,7 @@ public class PurchaseBoardService implements PurchaseBoardUseCase {
         Purchase purchase = new Purchase(savedBoard.getId(), requestDto.getPrice());
         purchaseRepository.save(purchase);
 
-        // ✅ Redis Stream 발행
-        Map<String, String> message = new HashMap<>();
-        message.put("id", String.valueOf(savedBoard.getId()));
-        message.put("authorUuid", savedBoard.getAuthorUuid().toString());
-        message.put("title", savedBoard.getTitle());
-        message.put("content", savedBoard.getContent());
-        message.put("imageUrl", savedBoard.getImageUrl());
-        message.put("createdAt", savedBoard.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        message.put("boardType", savedBoard.getBoardType().name());
-
-        redisTemplate.opsForStream().add("board-stream", message);
+        boardStreamPublisher.publishBoard(savedBoard);
 
         return savedBoard.getId();
     }
