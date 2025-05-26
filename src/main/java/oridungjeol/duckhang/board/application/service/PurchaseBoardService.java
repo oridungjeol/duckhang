@@ -2,6 +2,7 @@ package oridungjeol.duckhang.board.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import oridungjeol.duckhang.board.presentation.dto.RequestDto;
@@ -12,24 +13,24 @@ import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.application.port.out.PurchaseRepository;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.domain.Purchase;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.repository.BoardDocumentRepository;
 import oridungjeol.duckhang.board.domain.BoardType;
 import oridungjeol.duckhang.board.application.mapper.PurchaseDtoMapper;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
 
-import java.util.List;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PurchaseBoardService implements PurchaseBoardUseCase {
+
     private final BoardRepository boardRepository;
     private final PurchaseRepository purchaseRepository;
     private final UserJpaRepository userJpaRepository;
-    private final BoardDocumentRepository boardDocumentRepository;
+
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public Long createBoard(
@@ -42,17 +43,17 @@ public class PurchaseBoardService implements PurchaseBoardUseCase {
         Purchase purchase = new Purchase(savedBoard.getId(), requestDto.getPrice());
         purchaseRepository.save(purchase);
 
-        BoardDocument document = BoardDocument.builder()
-                .id(savedBoard.getId())
-                .authorUuid(savedBoard.getAuthorUuid())
-                .title(savedBoard.getTitle())
-                .content(savedBoard.getContent())
-                .imageUrl(savedBoard.getImageUrl())
-                .createdAt(savedBoard.getCreatedAt())
-                .boardType(savedBoard.getBoardType())
-                .build();
+        // ✅ Redis Stream 발행
+        Map<String, String> message = new HashMap<>();
+        message.put("id", String.valueOf(savedBoard.getId()));
+        message.put("authorUuid", savedBoard.getAuthorUuid().toString());
+        message.put("title", savedBoard.getTitle());
+        message.put("content", savedBoard.getContent());
+        message.put("imageUrl", savedBoard.getImageUrl());
+        message.put("createdAt", savedBoard.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        message.put("boardType", savedBoard.getBoardType().name());
 
-        boardDocumentRepository.save(document);
+        redisTemplate.opsForStream().add("board-stream", message);
 
         return savedBoard.getId();
     }
@@ -63,7 +64,7 @@ public class PurchaseBoardService implements PurchaseBoardUseCase {
         List<Board> boards = boardRepository.findAllByBoardType(BoardType.PURCHASE);
 
         return boards.stream()
-                .map(board-> {
+                .map(board -> {
                     Purchase purchase = purchaseRepository.findByBoardId(board.getId())
                             .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
 
