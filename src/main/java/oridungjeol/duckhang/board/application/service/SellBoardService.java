@@ -4,11 +4,11 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
 import oridungjeol.duckhang.board.application.mapper.SellDtoMapper;
+import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
 import oridungjeol.duckhang.board.presentation.dto.RequestDto;
-import oridungjeol.duckhang.board.application.dto.TradeDetailDto;
-import oridungjeol.duckhang.board.application.dto.TradeListDto;
-import oridungjeol.duckhang.board.application.port.in.SellBoardUseCase;
+import oridungjeol.duckhang.board.presentation.dto.TradeDetailDto;
 import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.application.port.out.SellRepository;
 import oridungjeol.duckhang.board.domain.Board;
@@ -25,18 +25,24 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SellBoardService implements SellBoardUseCase {
+public class SellBoardService implements BoardUseCase {
     private final BoardRepository boardRepository;
     private final SellRepository sellRepository;
     private final UserJpaRepository userJpaRepository;
     private final BoardDocumentRepository boardDocumentRepository;
 
     @Override
+    public boolean supportBoardType(BoardType boardType) {
+        return BoardType.SELL == boardType;
+    }
+
+    @Override
     public Long createBoard(
             UUID authorUuid,
+            BoardType boardType,
             RequestDto requestDto
     ) {
-        Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl(), BoardType.SALE);
+        Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl(), boardType);
         Board savedBoard = boardRepository.save(board);
 
         Sell sell = new Sell(savedBoard.getId(), requestDto.getPrice());
@@ -57,10 +63,11 @@ public class SellBoardService implements SellBoardUseCase {
         return savedBoard.getId();
     }
 
+
     @Override
     @Transactional(readOnly = true)
-    public List<TradeListDto> getAllBoards() {
-        List<Board> boards = boardRepository.findAllByBoardType(BoardType.SALE);
+    public List<BoardListResponseDto> getAllBoards() {
+        List<Board> boards = boardRepository.findAllByBoardType(BoardType.SELL);
 
         return boards.stream()
                 .map(board-> {
