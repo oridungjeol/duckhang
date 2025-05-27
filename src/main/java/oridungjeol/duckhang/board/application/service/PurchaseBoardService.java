@@ -6,30 +6,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
+import oridungjeol.duckhang.board.infrastructure.redis.BoardStreamPublisher;
 import oridungjeol.duckhang.board.presentation.dto.RequestDto;
 import oridungjeol.duckhang.board.presentation.dto.TradeDetailDto;
 import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.application.port.out.PurchaseRepository;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.domain.Purchase;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.repository.BoardDocumentRepository;
 import oridungjeol.duckhang.board.domain.BoardType;
 import oridungjeol.duckhang.board.application.mapper.PurchaseDtoMapper;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PurchaseBoardService implements BoardUseCase {
+
     private final BoardRepository boardRepository;
     private final PurchaseRepository purchaseRepository;
     private final UserJpaRepository userJpaRepository;
-    private final BoardDocumentRepository boardDocumentRepository;
+
+    private final BoardStreamPublisher boardStreamPublisher;
 
     @Override
     public boolean supportBoardType(BoardType boardType) {
@@ -48,17 +48,7 @@ public class PurchaseBoardService implements BoardUseCase {
         Purchase purchase = new Purchase(savedBoard.getId(), requestDto.getPrice());
         purchaseRepository.save(purchase);
 
-        BoardDocument document = BoardDocument.builder()
-                .id(savedBoard.getId())
-                .authorUuid(savedBoard.getAuthorUuid())
-                .title(savedBoard.getTitle())
-                .content(savedBoard.getContent())
-                .imageUrl(savedBoard.getImageUrl())
-                .createdAt(savedBoard.getCreatedAt())
-                .boardType(savedBoard.getBoardType())
-                .build();
-
-        boardDocumentRepository.save(document);
+        boardStreamPublisher.publishBoard(savedBoard);
 
         return savedBoard.getId();
     }
@@ -69,7 +59,7 @@ public class PurchaseBoardService implements BoardUseCase {
         List<Board> boards = boardRepository.findAllByBoardType(BoardType.PURCHASE);
 
         return boards.stream()
-                .map(board-> {
+                .map(board -> {
                     Purchase purchase = purchaseRepository.findByBoardId(board.getId())
                             .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
 
