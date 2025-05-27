@@ -73,6 +73,4 @@ public class ChatRoomController {
             return existChatRoom;
         }
     }
-
-    //TODO 채팅방 참가하기
 }
