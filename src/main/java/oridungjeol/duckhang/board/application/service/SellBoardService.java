@@ -106,6 +106,9 @@ public class SellBoardService implements BoardUseCase {
         boardRepository.save(board);
         sellRepository.save(sell);
 
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, sell, BoardEventType.UPDATE);
+        boardStreamPublisher.publishBoard(eventDto);
+
         return board.getId();
     }
 
@@ -114,6 +117,12 @@ public class SellBoardService implements BoardUseCase {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
         board.validateAuthor(authorUuid);
+
+        Sell sell = sellRepository.findByBoardId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Sell not found"));
+
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, sell, BoardEventType.DELETE);
+        boardStreamPublisher.publishBoard(eventDto);
 
         sellRepository.deleteByBoardId(id);
         boardRepository.deleteById(id);

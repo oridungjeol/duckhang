@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class Sell {
+public class Sell implements PricedBoardDetail {
     private Long boardId;
     private int price;
 

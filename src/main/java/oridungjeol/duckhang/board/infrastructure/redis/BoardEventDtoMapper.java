@@ -1,12 +1,12 @@
 package oridungjeol.duckhang.board.infrastructure.redis;
 
 import oridungjeol.duckhang.board.domain.Board;
-import oridungjeol.duckhang.board.domain.Purchase;
+import oridungjeol.duckhang.board.domain.PricedBoardDetail;
 
 
 public class BoardEventDtoMapper {
 
-    public static BoardEventDto toDto(Board board, Purchase purchase, BoardEventType type) {
+    public static BoardEventDto toDto(Board board, PricedBoardDetail detail, BoardEventType type) {
         return new BoardEventDto(
                 board.getId(),
                 board.getAuthorUuid(),
@@ -15,7 +15,7 @@ public class BoardEventDtoMapper {
                 board.getImageUrl(),
                 board.getBoardType(),
                 board.getCreatedAt(),
-                purchase.getPrice(),
+                detail.getPrice(),
                 type
         );
     }
