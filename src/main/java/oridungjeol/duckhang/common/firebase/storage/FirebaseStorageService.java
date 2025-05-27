@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Service
@@ -22,12 +24,18 @@ public class FirebaseStorageService {
         if (file.isEmpty()) {
             return null;
         }
+
         try {
             String fileName = generateUniqueFileName(file.getOriginalFilename());
             Bucket bucket = StorageClient.getInstance().bucket();
-            bucket.create(fileName, file.getInputStream(), file.getContentType());
+            Blob blob = bucket.create(fileName, file.getInputStream(), file.getContentType());
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
 
-            return String.format("https://storage.googleapis.com/%s/%s", bucket.getName(), fileName);
+            return String.format(
+                    "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
+                    bucket.getName(),
+                    encodedFileName
+            );
         } catch (IOException e) {
             throw new IllegalArgumentException("파일 업로드 중 오류가 발생했습니다.", e);
         }
