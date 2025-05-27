@@ -166,7 +166,7 @@ public class ChatService {
 
         ChatRoomParticipantEntity participantResponse = chatParticipantRepository.save(newChatRoomParticipant);
 
-        //user name 가져오기
+        //글쓴이의 user name 가져오기
         User user = userJpaRepository.findByUuid(UUID.fromString(chatParam.getAuthor_uuid()))
                 .orElseThrow(() -> new IllegalArgumentException("해당 uuid에 대한 사용자를 찾을 수 없습니다."));
 
@@ -174,7 +174,7 @@ public class ChatService {
         ChatDocument chatDocument = ChatDocument.builder()
                 .type(MessageType.SYSTEM)
                 .authorUuid(uuid)
-                .content(user.getNickname() + "님과의 전설적인 대화가 막 시작되었어요.")
+                .content(chatParam.getName() + " 채팅이 시작되었어요.")
                 .createdAt(LocalDateTime.now())
                 .roomId(response.getRoom_id())
                 .build();
