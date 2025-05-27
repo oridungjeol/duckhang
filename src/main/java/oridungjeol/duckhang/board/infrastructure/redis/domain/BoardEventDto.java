@@ -1,8 +1,9 @@
-package oridungjeol.duckhang.board.infrastructure.redis;
+package oridungjeol.duckhang.board.infrastructure.redis.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import oridungjeol.duckhang.board.domain.BoardType;
+import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

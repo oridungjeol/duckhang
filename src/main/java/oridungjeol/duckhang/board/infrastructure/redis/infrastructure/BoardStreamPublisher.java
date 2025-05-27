@@ -1,11 +1,10 @@
-package oridungjeol.duckhang.board.infrastructure.redis;
+package oridungjeol.duckhang.board.infrastructure.redis.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import oridungjeol.duckhang.board.domain.Board;
+import oridungjeol.duckhang.board.infrastructure.redis.domain.BoardEventDto;
 
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 

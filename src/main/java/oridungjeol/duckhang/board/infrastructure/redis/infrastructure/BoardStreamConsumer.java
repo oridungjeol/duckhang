@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board.infrastructure.redis;
+package oridungjeol.duckhang.board.infrastructure.redis.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +11,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import oridungjeol.duckhang.board.domain.BoardType;
 import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
 import oridungjeol.duckhang.board.infrastructure.elasticsearch.repository.BoardDocumentRepository;
+import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

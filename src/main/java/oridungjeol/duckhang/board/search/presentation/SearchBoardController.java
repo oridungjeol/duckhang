@@ -10,27 +10,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import oridungjeol.duckhang.board.domain.BoardType;
-import oridungjeol.duckhang.board.search.BoardSearchResultDto;
-import oridungjeol.duckhang.board.search.BoardSearchService;
+import oridungjeol.duckhang.board.search.domain.SearchBoardResultDto;
+import oridungjeol.duckhang.board.search.application.SearchBoardService;
+import oridungjeol.duckhang.board.search.support.SearchFieldType;
 
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/board/search")
-public class BoardSearchController {
+public class SearchBoardController {
 
-    private final BoardSearchService boardSearchService;
+    private final SearchBoardService searchBoardService;
 
     @GetMapping
-    public Page<BoardSearchResultDto> searchBoards(
+    public Page<SearchBoardResultDto> searchBoards(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) BoardType boardType
+            @RequestParam(required = false) BoardType boardType,
+            @RequestParam(defaultValue = "ALL") SearchFieldType searchFieldType
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return boardSearchService.searchBoards(keyword, pageable, boardType);
+        return searchBoardService.searchBoards(keyword, pageable, boardType, searchFieldType);
     }
-
-
 }

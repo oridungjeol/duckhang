@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board.search.repository;
+package oridungjeol.duckhang.board.search.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import oridungjeol.duckhang.board.domain.BoardType;
@@ -11,23 +11,33 @@ import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Repository;
-import oridungjeol.duckhang.board.search.BoardSearchResultDto;
+import oridungjeol.duckhang.board.search.domain.SearchBoardResultDto;
+import oridungjeol.duckhang.board.search.support.SearchFieldType;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class BoardSearchRepository {
+public class SearchBoardRepository {
 
     private final ElasticsearchTemplate elasticsearchTemplate;
 
-           public Page<BoardSearchResultDto> searchBoard(String keyword, Pageable pageable, Optional<BoardType> boardType) {
+           public Page<SearchBoardResultDto> searchBoard(String keyword, Pageable pageable, Optional<BoardType> boardType, SearchFieldType fieldType) {
             Criteria criteria = new Criteria();
 
             if (keyword != null && !keyword.isBlank()) {
-                Criteria keywordCriteria = new Criteria().or(Criteria.where("title").matches(keyword))
-                        .or(Criteria.where("content").matches(keyword));
+
+                Criteria keywordCriteria;
+
+                switch (fieldType) {
+                    case TITLE -> keywordCriteria = Criteria.where("title").matches(keyword);
+                    case CONTENT -> keywordCriteria = Criteria.where("content").matches(keyword);
+                    case ALL -> keywordCriteria = new Criteria().or(Criteria.where("title").matches(keyword))
+                            .or(Criteria.where("content").matches(keyword));
+                    default -> throw new IllegalArgumentException("Invalid field type");
+                }
+
                 criteria = criteria.and(keywordCriteria);
             }
 
@@ -39,15 +49,14 @@ public class BoardSearchRepository {
 
             var searchHits = elasticsearchTemplate.search(query, BoardDocument.class);
 
-            List<BoardSearchResultDto> results = searchHits.getSearchHits().stream()
+            List<SearchBoardResultDto> results = searchHits.getSearchHits().stream()
                     .map(SearchHit::getContent)
-                    .map(doc -> BoardSearchResultDto.builder()
+                    .map(doc -> SearchBoardResultDto.builder()
                             .id(doc.getId())
                             .title(doc.getTitle())
                             .content(doc.getContent())
                             .imageUrl(doc.getImageUrl())
                             .price(doc.getPrice())
-//                        .createdAt(doc.getCreatedAt())
                             .boardType(doc.getBoardType())
                             .createdAt(doc.getCreatedAt())
                             .build())
