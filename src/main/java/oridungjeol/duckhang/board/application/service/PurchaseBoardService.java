@@ -19,17 +19,18 @@ import oridungjeol.duckhang.board.application.mapper.PurchaseDtoMapper;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PurchaseBoardService implements BoardUseCase {
+
     private final BoardRepository boardRepository;
     private final PurchaseRepository purchaseRepository;
     private final UserJpaRepository userJpaRepository;
-    private final BoardDocumentRepository boardDocumentRepository;
+
+    private final BoardStreamPublisher boardStreamPublisher;
 
     @Override
     public boolean supportBoardType(BoardType boardType) {
@@ -48,17 +49,7 @@ public class PurchaseBoardService implements BoardUseCase {
         PurchasePost purchasePost = new PurchasePost(savedBoard.getId(), requestDto.getPrice());
         purchaseRepository.save(purchasePost);
 
-        BoardDocument document = BoardDocument.builder()
-                .id(savedBoard.getId())
-                .authorUuid(savedBoard.getAuthorUuid())
-                .title(savedBoard.getTitle())
-                .content(savedBoard.getContent())
-                .imageUrl(savedBoard.getImageUrl())
-                .createdAt(savedBoard.getCreatedAt())
-                .boardType(savedBoard.getBoardType())
-                .build();
-
-        boardDocumentRepository.save(document);
+        boardStreamPublisher.publishBoard(savedBoard);
 
         return savedBoard.getId();
     }
