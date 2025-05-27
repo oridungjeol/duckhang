@@ -2,7 +2,6 @@ package oridungjeol.duckhang.board.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
@@ -14,21 +13,17 @@ import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.application.port.out.PurchaseRepository;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.domain.Purchase;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.repository.BoardDocumentRepository;
 import oridungjeol.duckhang.board.domain.BoardType;
 import oridungjeol.duckhang.board.application.mapper.PurchaseDtoMapper;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PurchaseBoardService implements BoardUseCase {
-
 
     private final BoardRepository boardRepository;
     private final PurchaseRepository purchaseRepository;
