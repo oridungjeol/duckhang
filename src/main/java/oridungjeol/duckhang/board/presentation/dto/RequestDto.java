@@ -1,6 +1,7 @@
 package oridungjeol.duckhang.board.presentation.dto;
 
 import lombok.Getter;
+import oridungjeol.duckhang.board.domain.BoardType;
 
 @Getter
 public class RequestDto {
