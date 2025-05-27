@@ -1,9 +1,9 @@
 package oridungjeol.duckhang.board.application.port.in;
 
-import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
-import oridungjeol.duckhang.board.presentation.dto.BoardResponseDto;
+import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
+import oridungjeol.duckhang.board.presentation.dto.response.BoardResponseDto;
 import oridungjeol.duckhang.board.domain.BoardType;
-import oridungjeol.duckhang.board.presentation.dto.RequestDto;
+import oridungjeol.duckhang.board.presentation.dto.request.RequestDto;
 
 import java.util.List;
 import java.util.UUID;
