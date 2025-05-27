@@ -9,23 +9,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import oridungjeol.duckhang.auth.infrastructure.jwt.JwtParser;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
 import oridungjeol.duckhang.chat.application.domain.MessageType;
 import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.application.dto.ChatParam;
 import oridungjeol.duckhang.chat.application.dto.ChatRoom;
+import oridungjeol.duckhang.chat.application.dto.ChatRoomParticipant;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocument;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.repository.ChatESRepository;
 
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatRoomEntity;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatRoomParticipantEntity;
+import oridungjeol.duckhang.chat.infrastructure.entity.ChatRoomParticipantPK;
 import oridungjeol.duckhang.chat.infrastructure.mapper.ChatMapper;
 import oridungjeol.duckhang.chat.infrastructure.mapper.ChatRoomMapper;
+import oridungjeol.duckhang.chat.infrastructure.repository.ChatParticipantRepository;
 import oridungjeol.duckhang.chat.infrastructure.repository.ChatRepository;
+import oridungjeol.duckhang.user.infrastructure.entity.User;
+import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ChatService {
@@ -34,15 +40,19 @@ public class ChatService {
     private final ChatMapper chatMapper;
     private final ChatRoomMapper chatRoomMapper;
     private final ChatRepository chatRepository;
+    private final ChatParticipantRepository chatParticipantRepository;
+    private final UserJpaRepository userJpaRepository;
 
     private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatESRepository chatESRepository, ChatMapper chatMapper, JwtParser jwtParser, ChatRoomMapper chatRoomMapper, ChatRepository chatRepository) {
+    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatESRepository chatESRepository, ChatMapper chatMapper, JwtParser jwtParser, ChatRoomMapper chatRoomMapper, ChatRepository chatRepository, ChatParticipantRepository chatParticipantRepository, UserJpaRepository userJpaRepository) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.chatESRepository = chatESRepository;
         this.chatMapper = chatMapper;
         this.chatRoomMapper = chatRoomMapper;
         this.chatRepository = chatRepository;
+        this.chatParticipantRepository = chatParticipantRepository;
+        this.userJpaRepository = userJpaRepository;
     }
 
     /**
@@ -109,6 +119,16 @@ public class ChatService {
         return chatRoomList;
     }
 
+    public ChatRoom joinChatRoom(String uuid, ChatParam chatParam) {
+        ChatRoomParticipantEntity chatRoomParticipantEntity = chatParticipantRepository.findChatRoomIsExist(uuid, chatParam.getBoard_id());
+
+        if (chatRoomParticipantEntity == null) {
+            return null;
+        } else {
+            return chatRoomMapper.chatRoomParticipantToDto(chatRoomParticipantEntity);
+        }
+    }
+
     /**
      * 새로운 채팅방을 생성하고 생성된 채팅방 객체를 리턴합니다.
      * @param uuid 유저 고유 번호
@@ -116,26 +136,55 @@ public class ChatService {
      * @return 채팅방 정보
      */
     public ChatRoom createChatRoom(String uuid, ChatParam chatParam) {
-        ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
-                .uuid(uuid)
-                .name(chatParam.getName())
-                .board_id(chatParam.getBoard_id())
-                .type(chatParam.getType())
-                .build();
+        //두 유저 사이에 채팅방이 있는지 확인하는 쿼리
+        ChatRoomParticipantEntity chatRoomEntity = chatParticipantRepository.findChatRoomIsExist(uuid, chatParam.getBoard_id());
 
-        ChatRoomEntity response = chatRepository.save(chatRoomEntity);
+        //있다면 기존 채팅방 return
+        if (chatRoomEntity != null) {
+            return chatRoomMapper.chatRoomParticipantToDto(chatRoomEntity);
+        }
+        else {
+            System.out.println("authoruuid : " + chatParam.getAuthor_uuid());
+            //없다면 새로운 채팅방 생성
+            ChatRoomEntity newChatRoom = ChatRoomEntity.builder()
+                    .uuid(chatParam.getAuthor_uuid())
+                    .name(chatParam.getName())
+                    .board_id(chatParam.getBoard_id())
+                    .type(chatParam.getType())
+                    .build();
 
-        ChatDocument chatDocument = ChatDocument.builder()
-                .type(MessageType.SYSTEM)
-                .authorUuid(uuid)
-                .content(response.getName() + "님과의 전설적인 대화가 막 시작되었어요.")
-                .createdAt(LocalDateTime.now())
-                .roomId(response.getRoom_id())
-                .build();
+            ChatRoomEntity response = chatRepository.save(newChatRoom);
 
-        chatESRepository.save(chatDocument);
+            //자기 자신은 참가자로 채팅방 참여
+            ChatRoomParticipantEntity newChatRoomParticipant = ChatRoomParticipantEntity.builder()
+                    .participant_id(ChatRoomParticipantPK.builder()
+                            .room_id(response.getRoom_id())
+                            .uuid(uuid)
+                            .build())
+                    .name(response.getName())
+                    .board_id(response.getBoard_id())
+                    .type(response.getType())
+                    .build();
 
-        ChatRoom chatRoomInfo = chatRoomMapper.chatRoomToDto(response);
-        return chatRoomInfo;
+            ChatRoomParticipantEntity participantResponse = chatParticipantRepository.save(newChatRoomParticipant);
+
+            //user name 가져오기
+            User user = userJpaRepository.findByUuid(UUID.fromString(chatParam.getAuthor_uuid()))
+                    .orElseThrow(() -> new IllegalArgumentException("해당 uuid에 대한 사용자를 찾을 수 없습니다."));
+
+            //시스템 메시지 저장
+            ChatDocument chatDocument = ChatDocument.builder()
+                    .type(MessageType.SYSTEM)
+                    .authorUuid(uuid)
+                    .content(user.getNickname() + "님과의 전설적인 대화가 막 시작되었어요.")
+                    .createdAt(LocalDateTime.now())
+                    .roomId(response.getRoom_id())
+                    .build();
+
+            chatESRepository.save(chatDocument);
+
+            ChatRoom chatRoomInfo = chatRoomMapper.chatRoomToDto(response);
+            return chatRoomInfo;
+        }
     }
 }
