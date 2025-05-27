@@ -14,15 +14,16 @@ import java.util.Map;
 public class BoardStreamPublisher {
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void publishBoard(Board board) {
+    public void publishBoard(BoardEventDto dto) {
         Map<String, String> message = new HashMap<>();
-        message.put("id", String.valueOf(board.getId()));
-        message.put("authorUuid", board.getAuthorUuid().toString());
-        message.put("title", board.getTitle());
-        message.put("content", board.getContent());
-        message.put("imageUrl", board.getImageUrl());
-        message.put("createdAt", board.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        message.put("boardType", board.getBoardType().name());
+        message.put("id", String.valueOf(dto.getId()));
+        message.put("authorUuid", dto.getAuthorUuid().toString());
+        message.put("title", dto.getTitle());
+        message.put("content", dto.getContent());
+        message.put("imageUrl", dto.getImageUrl());
+        message.put("createdAt", String.valueOf(dto.getCreatedAt()));
+        message.put("boardType", String.valueOf(dto.getBoardType()));
+        message.put("price", String.valueOf(dto.getPrice()));
 
         redisTemplate.opsForStream().add("board-stream", message);
     }

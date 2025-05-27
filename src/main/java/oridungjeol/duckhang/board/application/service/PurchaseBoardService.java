@@ -4,6 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import oridungjeol.duckhang.board.infrastructure.redis.BoardEventDto;
+import oridungjeol.duckhang.board.infrastructure.redis.BoardEventDtoMapper;
 import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
 import oridungjeol.duckhang.board.infrastructure.redis.BoardStreamPublisher;
@@ -48,7 +50,8 @@ public class PurchaseBoardService implements BoardUseCase {
         Purchase purchase = new Purchase(savedBoard.getId(), requestDto.getPrice());
         purchaseRepository.save(purchase);
 
-        boardStreamPublisher.publishBoard(savedBoard);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard, purchase);
+        boardStreamPublisher.publishBoard(eventDto);
 
         return savedBoard.getId();
     }

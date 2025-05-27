@@ -63,7 +63,9 @@ public class BoardStreamConsumer {
                                 .imageUrl((String) value.get("imageUrl"))
                                 .createdAt(LocalDateTime.parse((String) value.get("createdAt")))
                                 .boardType(BoardType.valueOf((String) value.get("boardType")))
+                                .price(Integer.parseInt((String) value.get("price")))
                                 .build();
+
 
                         boardDocumentRepository.save(doc);
                         redisTemplate.opsForStream().acknowledge(STREAM_KEY, GROUP, message.getId());
