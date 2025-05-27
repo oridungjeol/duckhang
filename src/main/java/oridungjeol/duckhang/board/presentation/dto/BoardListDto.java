@@ -1,16 +1,14 @@
-package oridungjeol.duckhang.board.application.dto;
+package oridungjeol.duckhang.board.presentation.dto;
 
 import lombok.Builder;
 
 import java.time.LocalDateTime;
 
 @Builder
-public record TradeDetailDto(
+public record BoardListDto(
         Long id,
-        String nickname,
         String title,
-        String content,
         String imageUrl,
-        int price,
         LocalDateTime createdAt
-){}
+) implements BoardListResponseDto{
+}

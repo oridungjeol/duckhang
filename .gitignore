@@ -37,6 +37,7 @@ out/
 ### VS Code ###
 .vscode/
 
-redis/
+/redis
+/redis/data
 
 /src/main/resources/**.json

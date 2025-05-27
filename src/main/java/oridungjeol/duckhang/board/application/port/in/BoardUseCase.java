@@ -1,0 +1,19 @@
+package oridungjeol.duckhang.board.application.port.in;
+
+import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
+import oridungjeol.duckhang.board.presentation.dto.BoardResponseDto;
+import oridungjeol.duckhang.board.domain.BoardType;
+import oridungjeol.duckhang.board.presentation.dto.RequestDto;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface BoardUseCase {
+    boolean supportBoardType(BoardType boardType);
+    Long createBoard(UUID authorUuid,  BoardType boardType, RequestDto requestDto);
+    Long updateBoard(Long boardId, UUID authorUuid, RequestDto requestDto);
+    void deleteBoard(UUID authorUuid, Long id);
+
+    BoardResponseDto getDetailBoard(Long boardId);
+    List<BoardListResponseDto> getAllBoards();
+}

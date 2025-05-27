@@ -29,7 +29,7 @@ public class ReviewController {
             @AuthenticationPrincipal CustomPrincipal principal,
             @RequestBody ReviewRequestDto request
     ) {
-        return ResponseEntity.ok(String.valueOf(reviewUseCase.addReview(principal.getUuid(), request)));
+        return ResponseEntity.ok(reviewUseCase.addReview(principal.getUuid(), request));
     }
 
     @GetMapping("/{userId}")
