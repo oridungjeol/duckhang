@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import oridungjeol.duckhang.board.infrastructure.redis.BoardEventDto;
 import oridungjeol.duckhang.board.infrastructure.redis.BoardEventDtoMapper;
+import oridungjeol.duckhang.board.infrastructure.redis.BoardEventType;
 import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
 import oridungjeol.duckhang.board.infrastructure.redis.BoardStreamPublisher;
@@ -39,18 +40,14 @@ public class PurchaseBoardService implements BoardUseCase {
     }
 
     @Override
-    public Long createBoard(
-            UUID authorUuid,
-            BoardType boardType,
-            RequestDto requestDto
-    ) {
+    public Long createBoard(UUID authorUuid, BoardType boardType, RequestDto requestDto) {
         Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl(), boardType);
         Board savedBoard = boardRepository.save(board);
 
         Purchase purchase = new Purchase(savedBoard.getId(), requestDto.getPrice());
         purchaseRepository.save(purchase);
 
-        BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard, purchase);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard, purchase, BoardEventType.CREATE);
         boardStreamPublisher.publishBoard(eventDto);
 
         return savedBoard.getId();
@@ -65,10 +62,8 @@ public class PurchaseBoardService implements BoardUseCase {
                 .map(board -> {
                     Purchase purchase = purchaseRepository.findByBoardId(board.getId())
                             .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
-
                     User user = userJpaRepository.findByUuid(board.getAuthorUuid())
                             .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
                     return PurchaseDtoMapper.toTradeListDto(board, purchase, user);
                 })
                 .toList();
@@ -91,7 +86,6 @@ public class PurchaseBoardService implements BoardUseCase {
     public Long updateBoard(Long boardId, UUID authorUuid, RequestDto requestDto) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
-
         board.validateAuthor(authorUuid);
 
         Purchase purchase = purchaseRepository.findByBoardId(boardId)
@@ -103,6 +97,9 @@ public class PurchaseBoardService implements BoardUseCase {
         boardRepository.save(board);
         purchaseRepository.save(purchase);
 
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, purchase, BoardEventType.UPDATE);
+        boardStreamPublisher.publishBoard(eventDto);
+
         return board.getId();
     }
 
@@ -111,6 +108,12 @@ public class PurchaseBoardService implements BoardUseCase {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
         board.validateAuthor(authorUuid);
+
+        Purchase purchase = purchaseRepository.findByBoardId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
+
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, purchase, BoardEventType.DELETE);
+        boardStreamPublisher.publishBoard(eventDto);
 
         purchaseRepository.deleteByBoardId(id);
         boardRepository.deleteById(id);

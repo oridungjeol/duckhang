@@ -18,4 +18,5 @@ public class BoardEventDto {
     private BoardType boardType;
     private LocalDateTime createdAt;
     private int price;
+    private BoardEventType eventType;
 }

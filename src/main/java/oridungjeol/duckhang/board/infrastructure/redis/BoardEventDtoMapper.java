@@ -6,7 +6,7 @@ import oridungjeol.duckhang.board.domain.Purchase;
 
 public class BoardEventDtoMapper {
 
-    public static BoardEventDto toDto(Board board, Purchase purchase) {
+    public static BoardEventDto toDto(Board board, Purchase purchase, BoardEventType type) {
         return new BoardEventDto(
                 board.getId(),
                 board.getAuthorUuid(),
@@ -15,7 +15,8 @@ public class BoardEventDtoMapper {
                 board.getImageUrl(),
                 board.getBoardType(),
                 board.getCreatedAt(),
-                purchase.getPrice()
+                purchase.getPrice(),
+                type
         );
     }
 }

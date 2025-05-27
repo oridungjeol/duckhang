@@ -4,6 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import oridungjeol.duckhang.board.infrastructure.redis.BoardEventDto;
+import oridungjeol.duckhang.board.infrastructure.redis.BoardEventDtoMapper;
+import oridungjeol.duckhang.board.infrastructure.redis.BoardEventType;
+import oridungjeol.duckhang.board.infrastructure.redis.BoardStreamPublisher;
 import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
 import oridungjeol.duckhang.board.application.mapper.SellDtoMapper;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
@@ -29,7 +33,7 @@ public class SellBoardService implements BoardUseCase {
     private final BoardRepository boardRepository;
     private final SellRepository sellRepository;
     private final UserJpaRepository userJpaRepository;
-    private final BoardDocumentRepository boardDocumentRepository;
+    private final BoardStreamPublisher boardStreamPublisher;
 
     @Override
     public boolean supportBoardType(BoardType boardType) {
@@ -48,17 +52,8 @@ public class SellBoardService implements BoardUseCase {
         Sell sell = new Sell(savedBoard.getId(), requestDto.getPrice());
         sellRepository.save(sell);
 
-        BoardDocument document = BoardDocument.builder()
-                .id(savedBoard.getId())
-                .authorUuid(savedBoard.getAuthorUuid())
-                .title(savedBoard.getTitle())
-                .content(savedBoard.getContent())
-                .imageUrl(savedBoard.getImageUrl())
-                .createdAt(savedBoard.getCreatedAt())
-                .boardType(savedBoard.getBoardType())
-                .build();
-
-        boardDocumentRepository.save(document);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard, sell, BoardEventType.CREATE);
+        boardStreamPublisher.publishBoard(eventDto);
 
         return savedBoard.getId();
     }
