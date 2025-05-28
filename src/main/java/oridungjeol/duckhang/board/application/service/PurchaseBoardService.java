@@ -4,18 +4,18 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
 import oridungjeol.duckhang.board.infrastructure.redis.domain.BoardEventDto;
 import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventDtoMapper;
 import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventType;
-import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
 import oridungjeol.duckhang.board.infrastructure.redis.infrastructure.BoardStreamPublisher;
-import oridungjeol.duckhang.board.presentation.dto.RequestDto;
-import oridungjeol.duckhang.board.presentation.dto.TradeDetailDto;
+import oridungjeol.duckhang.board.presentation.dto.request.RequestDto;
+import oridungjeol.duckhang.board.presentation.dto.response.TradeDetailDto;
 import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.application.port.out.PurchaseRepository;
 import oridungjeol.duckhang.board.domain.Board;
-import oridungjeol.duckhang.board.domain.Purchase;
+import oridungjeol.duckhang.board.domain.PurchasePost;
 import oridungjeol.duckhang.board.domain.BoardType;
 import oridungjeol.duckhang.board.application.mapper.PurchaseDtoMapper;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
@@ -44,10 +44,10 @@ public class PurchaseBoardService implements BoardUseCase {
         Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl(), boardType);
         Board savedBoard = boardRepository.save(board);
 
-        Purchase purchase = new Purchase(savedBoard.getId(), requestDto.getPrice());
-        purchaseRepository.save(purchase);
+        PurchasePost purchasePost = new PurchasePost(savedBoard.getId(), requestDto.getPrice());
+        purchaseRepository.save(purchasePost);
 
-        BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard, purchase, BoardEventType.CREATE);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard, purchasePost, BoardEventType.CREATE);
         boardStreamPublisher.publishBoard(eventDto);
 
         return savedBoard.getId();
@@ -59,12 +59,14 @@ public class PurchaseBoardService implements BoardUseCase {
         List<Board> boards = boardRepository.findAllByBoardType(BoardType.PURCHASE);
 
         return boards.stream()
-                .map(board -> {
-                    Purchase purchase = purchaseRepository.findByBoardId(board.getId())
+                .map(board-> {
+                    PurchasePost purchasePost = purchaseRepository.findByBoardId(board.getId())
                             .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
+
                     User user = userJpaRepository.findByUuid(board.getAuthorUuid())
                             .orElseThrow(() -> new EntityNotFoundException("User not found"));
-                    return PurchaseDtoMapper.toTradeListDto(board, purchase, user);
+
+                    return PurchaseDtoMapper.toTradeListDto(board, purchasePost, user);
                 })
                 .toList();
     }
@@ -74,30 +76,31 @@ public class PurchaseBoardService implements BoardUseCase {
     public TradeDetailDto getDetailBoard(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
-        Purchase purchase = purchaseRepository.findByBoardId(boardId)
+        PurchasePost purchasePost = purchaseRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
         User user = userJpaRepository.findByUuid(board.getAuthorUuid())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return PurchaseDtoMapper.toTradeDetailDto(board, purchase, user);
+        return PurchaseDtoMapper.toTradeDetailDto(board, purchasePost, user);
     }
 
     @Override
     public Long updateBoard(Long boardId, UUID authorUuid, RequestDto requestDto) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
+
         board.validateAuthor(authorUuid);
 
-        Purchase purchase = purchaseRepository.findByBoardId(boardId)
+        PurchasePost purchasePost = purchaseRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
 
         board.updateContent(requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl());
-        purchase.updatePrice(requestDto.getPrice());
+        purchasePost.updatePrice(requestDto.getPrice());
 
         boardRepository.save(board);
-        purchaseRepository.save(purchase);
+        purchaseRepository.save(purchasePost);
 
-        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, purchase, BoardEventType.UPDATE);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, purchasePost, BoardEventType.UPDATE);
         boardStreamPublisher.publishBoard(eventDto);
 
         return board.getId();
@@ -109,10 +112,10 @@ public class PurchaseBoardService implements BoardUseCase {
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
         board.validateAuthor(authorUuid);
 
-        Purchase purchase = purchaseRepository.findByBoardId(id)
+        PurchasePost purchasePost = purchaseRepository.findByBoardId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
 
-        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, purchase, BoardEventType.DELETE);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, purchasePost, BoardEventType.DELETE);
         boardStreamPublisher.publishBoard(eventDto);
 
         purchaseRepository.deleteByBoardId(id);

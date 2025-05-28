@@ -4,19 +4,19 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import oridungjeol.duckhang.board.infrastructure.redis.domain.BoardEventDto;
-import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventDtoMapper;
-import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventType;
-import oridungjeol.duckhang.board.infrastructure.redis.infrastructure.BoardStreamPublisher;
-import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
 import oridungjeol.duckhang.board.application.mapper.SellDtoMapper;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
-import oridungjeol.duckhang.board.presentation.dto.RequestDto;
-import oridungjeol.duckhang.board.presentation.dto.TradeDetailDto;
+import oridungjeol.duckhang.board.domain.SellPost;
+import oridungjeol.duckhang.board.infrastructure.redis.domain.BoardEventDto;
+import oridungjeol.duckhang.board.infrastructure.redis.infrastructure.BoardStreamPublisher;
+import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventDtoMapper;
+import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventType;
+import oridungjeol.duckhang.board.presentation.dto.request.RequestDto;
+import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
+import oridungjeol.duckhang.board.presentation.dto.response.TradeDetailDto;
 import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.application.port.out.SellRepository;
 import oridungjeol.duckhang.board.domain.Board;
-import oridungjeol.duckhang.board.domain.Sell;
 import oridungjeol.duckhang.board.domain.BoardType;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
@@ -47,10 +47,10 @@ public class SellBoardService implements BoardUseCase {
         Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl(), boardType);
         Board savedBoard = boardRepository.save(board);
 
-        Sell sell = new Sell(savedBoard.getId(), requestDto.getPrice());
-        sellRepository.save(sell);
+        SellPost sellPost = new SellPost(savedBoard.getId(), requestDto.getPrice());
+        sellRepository.save(sellPost);
 
-        BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard, sell, BoardEventType.CREATE);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard, sellPost, BoardEventType.CREATE);
         boardStreamPublisher.publishBoard(eventDto);
 
         return savedBoard.getId();
@@ -64,13 +64,13 @@ public class SellBoardService implements BoardUseCase {
 
         return boards.stream()
                 .map(board-> {
-                    Sell sell = sellRepository.findByBoardId(board.getId())
+                    SellPost sellPost = sellRepository.findByBoardId(board.getId())
                             .orElseThrow(() -> new EntityNotFoundException("Sell not found"));
 
                     User user = userJpaRepository.findByUuid(board.getAuthorUuid())
                             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-                    return SellDtoMapper.toTradeListDto(board, sell, user);
+                    return SellDtoMapper.toTradeListDto(board, sellPost, user);
                 })
                 .toList();
     }
@@ -80,12 +80,12 @@ public class SellBoardService implements BoardUseCase {
     public TradeDetailDto getDetailBoard(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
-        Sell sell = sellRepository.findByBoardId(boardId)
+        SellPost sellPost = sellRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Sell not found"));
         User user = userJpaRepository.findByUuid(board.getAuthorUuid())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return SellDtoMapper.toTradeDetailDto(board, sell, user);
+        return SellDtoMapper.toTradeDetailDto(board, sellPost, user);
     }
 
     @Override
@@ -95,16 +95,16 @@ public class SellBoardService implements BoardUseCase {
 
         board.validateAuthor(authorUuid);
 
-        Sell sell = sellRepository.findByBoardId(boardId)
+        SellPost sellPost = sellRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Sell not found"));
 
         board.updateContent(requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl());
-        sell.updatePrice(requestDto.getPrice());
+        sellPost.updatePrice(requestDto.getPrice());
 
         boardRepository.save(board);
-        sellRepository.save(sell);
+        sellRepository.save(sellPost);
 
-        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, sell, BoardEventType.UPDATE);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, sellPost, BoardEventType.UPDATE);
         boardStreamPublisher.publishBoard(eventDto);
 
         return board.getId();
@@ -116,10 +116,10 @@ public class SellBoardService implements BoardUseCase {
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
         board.validateAuthor(authorUuid);
 
-        Sell sell = sellRepository.findByBoardId(id)
+        SellPost sellPost = sellRepository.findByBoardId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sell not found"));
 
-        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, sell, BoardEventType.DELETE);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, sellPost, BoardEventType.DELETE);
         boardStreamPublisher.publishBoard(eventDto);
 
         sellRepository.deleteByBoardId(id);

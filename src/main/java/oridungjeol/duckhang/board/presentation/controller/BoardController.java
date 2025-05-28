@@ -5,12 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import oridungjeol.duckhang.auth.domain.model.CustomPrincipal;
-import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
-import oridungjeol.duckhang.board.presentation.dto.BoardResponseDto;
+import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
+import oridungjeol.duckhang.board.presentation.dto.response.BoardResponseDto;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
 import oridungjeol.duckhang.board.application.service.BoardUseCaseFactory;
 import oridungjeol.duckhang.board.domain.BoardType;
-import oridungjeol.duckhang.board.presentation.dto.RequestDto;
+import oridungjeol.duckhang.board.presentation.dto.request.RequestDto;
 
 import java.util.List;
 import java.util.UUID;

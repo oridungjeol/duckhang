@@ -1,17 +1,17 @@
 package oridungjeol.duckhang.board.infrastructure.mapper;
 
-import oridungjeol.duckhang.board.domain.Purchase;
+import oridungjeol.duckhang.board.domain.PurchasePost;
 import oridungjeol.duckhang.board.infrastructure.entity.PurchaseEntity;
 
 public class PurchaseEntityMapper {
-    public static Purchase toDomain(PurchaseEntity entity) {
-        return new Purchase(entity.getBoardId(), entity.getPrice());
+    public static PurchasePost toDomain(PurchaseEntity entity) {
+        return new PurchasePost(entity.getBoardId(), entity.getPrice());
     }
 
-    public static PurchaseEntity toEntity(Purchase purchase) {
+    public static PurchaseEntity toEntity(PurchasePost purchasePost) {
         return PurchaseEntity.builder()
-                .boardId(purchase.getBoardId())
-                .price(purchase.getPrice())
+                .boardId(purchasePost.getBoardId())
+                .price(purchasePost.getPrice())
                 .build();
     }
 }
