@@ -4,15 +4,16 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import oridungjeol.duckhang.board.presentation.dto.BoardListResponseDto;
+import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
-import oridungjeol.duckhang.board.infrastructure.redis.BoardStreamPublisher;
-import oridungjeol.duckhang.board.presentation.dto.RequestDto;
-import oridungjeol.duckhang.board.presentation.dto.TradeDetailDto;
+import oridungjeol.duckhang.board.presentation.dto.request.RequestDto;
+import oridungjeol.duckhang.board.presentation.dto.response.TradeDetailDto;
 import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.application.port.out.PurchaseRepository;
 import oridungjeol.duckhang.board.domain.Board;
-import oridungjeol.duckhang.board.domain.Purchase;
+import oridungjeol.duckhang.board.domain.PurchasePost;
+import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
+import oridungjeol.duckhang.board.infrastructure.elasticsearch.repository.BoardDocumentRepository;
 import oridungjeol.duckhang.board.domain.BoardType;
 import oridungjeol.duckhang.board.application.mapper.PurchaseDtoMapper;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
@@ -45,8 +46,8 @@ public class PurchaseBoardService implements BoardUseCase {
         Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl(), boardType);
         Board savedBoard = boardRepository.save(board);
 
-        Purchase purchase = new Purchase(savedBoard.getId(), requestDto.getPrice());
-        purchaseRepository.save(purchase);
+        PurchasePost purchasePost = new PurchasePost(savedBoard.getId(), requestDto.getPrice());
+        purchaseRepository.save(purchasePost);
 
         boardStreamPublisher.publishBoard(savedBoard);
 
@@ -59,14 +60,14 @@ public class PurchaseBoardService implements BoardUseCase {
         List<Board> boards = boardRepository.findAllByBoardType(BoardType.PURCHASE);
 
         return boards.stream()
-                .map(board -> {
-                    Purchase purchase = purchaseRepository.findByBoardId(board.getId())
+                .map(board-> {
+                    PurchasePost purchasePost = purchaseRepository.findByBoardId(board.getId())
                             .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
 
                     User user = userJpaRepository.findByUuid(board.getAuthorUuid())
                             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-                    return PurchaseDtoMapper.toTradeListDto(board, purchase, user);
+                    return PurchaseDtoMapper.toTradeListDto(board, purchasePost, user);
                 })
                 .toList();
     }
@@ -76,12 +77,12 @@ public class PurchaseBoardService implements BoardUseCase {
     public TradeDetailDto getDetailBoard(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
-        Purchase purchase = purchaseRepository.findByBoardId(boardId)
+        PurchasePost purchasePost = purchaseRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
         User user = userJpaRepository.findByUuid(board.getAuthorUuid())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return PurchaseDtoMapper.toTradeDetailDto(board, purchase, user);
+        return PurchaseDtoMapper.toTradeDetailDto(board, purchasePost, user);
     }
 
     @Override
@@ -91,14 +92,14 @@ public class PurchaseBoardService implements BoardUseCase {
 
         board.validateAuthor(authorUuid);
 
-        Purchase purchase = purchaseRepository.findByBoardId(boardId)
+        PurchasePost purchasePost = purchaseRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
 
         board.updateContent(requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl());
-        purchase.updatePrice(requestDto.getPrice());
+        purchasePost.updatePrice(requestDto.getPrice());
 
         boardRepository.save(board);
-        purchaseRepository.save(purchase);
+        purchaseRepository.save(purchasePost);
 
         return board.getId();
     }

@@ -1,17 +1,17 @@
 package oridungjeol.duckhang.board.infrastructure.mapper;
 
-import oridungjeol.duckhang.board.domain.Sell;
+import oridungjeol.duckhang.board.domain.SellPost;
 import oridungjeol.duckhang.board.infrastructure.entity.SellEntity;
 
 public class SellEntityMapper {
-    public static Sell toDomain(SellEntity entity) {
-        return new Sell(entity.getBoardId(), entity.getPrice());
+    public static SellPost toDomain(SellEntity entity) {
+        return new SellPost(entity.getBoardId(), entity.getPrice());
     }
 
-    public static SellEntity toEntity(Sell sell) {
+    public static SellEntity toEntity(SellPost sellPost) {
         return SellEntity.builder()
-                .boardId(sell.getBoardId())
-                .price(sell.getPrice())
+                .boardId(sellPost.getBoardId())
+                .price(sellPost.getPrice())
                 .build();
     }
 }
