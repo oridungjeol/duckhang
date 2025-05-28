@@ -1,16 +1,13 @@
 package oridungjeol.duckhang.chat.infrastructure.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
+@Builder
 @Table(name = "chatroom_participant")
 public class ChatRoomParticipantEntity {
     @EmbeddedId
