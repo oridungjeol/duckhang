@@ -61,3 +61,6 @@ logging:
           client:
             RestTemplate: DEBUG
 
+firebase:
+  configuration-file: ${FIREBASE_CONFIGURATION_FILE}
+  bucket: ${FIREBASE_BUCKET}
