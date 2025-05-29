@@ -1,0 +1,66 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: duckhang
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
+            client-authentication-method: client_secret_post
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+  elasticsearch:
+    uris: http://localhost:9200/
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-validity-in-milliseconds: ${ACCESS_TOKEN_VALIDITY_IN_MILLISECONDS}
+  refresh-token-validity-in-milliseconds: ${REFRESH_TOKEN_VALIDITY_IN_MILLISECONDS}
+
+payment:
+  secret-key: ${PAYMENT_SECRET_KEY}
+  base-url: https://api.tosspayments.com/v1/payments
+  confirm-endpoint: /confirm
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web:
+          client:
+            RestTemplate: DEBUG
+
+firebase:
+  configuration-file: ${FIREBASE_CONFIGURATION_FILE}
+  bucket: ${FIREBASE_BUCKET}
