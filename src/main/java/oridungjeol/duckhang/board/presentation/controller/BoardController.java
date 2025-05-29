@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import oridungjeol.duckhang.auth.domain.model.CustomPrincipal;
+import oridungjeol.duckhang.board.application.port.in.MyPageUseCase;
 import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
 import oridungjeol.duckhang.board.presentation.dto.response.BoardResponseDto;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardUseCaseFactory boardUsecaseFactory;
+    private final MyPageUseCase myPageUseCase;
 
     @PostMapping("/{boardType}")
     public ResponseEntity<Long> createBoard(
@@ -36,7 +38,7 @@ public class BoardController {
     @GetMapping("/{boardType}")
     public ResponseEntity<List<BoardListResponseDto>> findAllBoards(@PathVariable BoardType boardType) {
         BoardUseCase boardUseCase = boardUsecaseFactory.getBoardUseCase(boardType);
-        List<BoardListResponseDto> boards = boardUseCase.getAllBoards();
+        List<BoardListResponseDto> boards = boardUseCase.getAllBoards(boardType);
         return ResponseEntity.ok(boards);
     }
 
@@ -74,4 +76,14 @@ public class BoardController {
         boardUseCase.deleteBoard(UUID.fromString(uuid),boardId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<BoardListResponseDto>> findMyBoards(
+            @PathVariable String userId
+    ) {
+        UUID userUuid = UUID.fromString(userId);
+        List<BoardListResponseDto> boards = myPageUseCase.getAllUserBoards(userUuid);
+        return ResponseEntity.ok(boards);
+    }
+
 }

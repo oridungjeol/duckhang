@@ -11,6 +11,7 @@ import oridungjeol.duckhang.board.infrastructure.mapper.BoardEntityMapper;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -48,5 +49,12 @@ public class BoardRepositoryAdapter implements BoardRepository {
     @Override
     public void deleteById(Long id) {
         boardJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Board> findAllByAuthorUuid(UUID authorUuid) {
+        return boardJpaRepository.findAllByAuthorUuid(authorUuid).stream()
+                .map(BoardEntityMapper::toDomain)
+                .toList();
     }
 }

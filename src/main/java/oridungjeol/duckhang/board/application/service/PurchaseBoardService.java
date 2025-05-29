@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import oridungjeol.duckhang.board.infrastructure.redis.BoardStreamPublisher;
 import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
 import oridungjeol.duckhang.board.presentation.dto.request.RequestDto;
@@ -56,8 +57,8 @@ public class PurchaseBoardService implements BoardUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BoardListResponseDto> getAllBoards() {
-        List<Board> boards = boardRepository.findAllByBoardType(BoardType.PURCHASE);
+    public List<BoardListResponseDto> getAllBoards(BoardType boardType) {
+        List<Board> boards = boardRepository.findAllByBoardType(boardType);
 
         return boards.stream()
                 .map(board-> {
@@ -67,7 +68,7 @@ public class PurchaseBoardService implements BoardUseCase {
                     User user = userJpaRepository.findByUuid(board.getAuthorUuid())
                             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-                    return PurchaseDtoMapper.toTradeListDto(board, purchasePost, user);
+                    return PurchaseDtoMapper.toTradeListDto(board, purchasePost);
                 })
                 .toList();
     }
