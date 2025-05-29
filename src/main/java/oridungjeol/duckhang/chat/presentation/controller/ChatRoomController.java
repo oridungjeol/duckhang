@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import oridungjeol.duckhang.auth.domain.model.CustomPrincipal;
 import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.application.dto.ChatParam;
@@ -68,5 +69,8 @@ public class ChatRoomController {
         return chatService.createChatRoom(uuid.getName(), chatParam);
     }
 
-    //TODO 채팅방 참가하기
+    @PostMapping("/upload/image")
+    public String uploadImage(@RequestParam("image") MultipartFile image) {
+        return chatService.uploadImage(image);
+    }
 }
