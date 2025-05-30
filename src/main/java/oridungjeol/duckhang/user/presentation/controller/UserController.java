@@ -30,7 +30,6 @@ public class UserController {
     }
 
     @PatchMapping()
-    @PreAuthorize("#uuid == authentication.principal.name")
     public void updateProfile(
             @AuthenticationPrincipal CustomPrincipal principal,
             @RequestBody UpdateProfileRequest profileRequest

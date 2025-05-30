@@ -36,6 +36,9 @@ public class UserUseCase {
      * @param updateProfileRequest 수정할 프로필 정보의 dto
      */
     public void updateProfile(String userId, UpdateProfileRequest updateProfileRequest) {
+        if (!userId.equals(updateProfileRequest.getUserId())) {
+            throw new IllegalArgumentException("본인 프로필만 수정할 수 있습니다.");
+        }
         UUID uuid = UUID.fromString(userId);
         userService.updateProfile(uuid, updateProfileRequest);
     }
