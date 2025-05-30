@@ -1,11 +1,11 @@
 package oridungjeol.duckhang.board.application.port.out;
 
-import oridungjeol.duckhang.board.domain.Purchase;
+import oridungjeol.duckhang.board.domain.PurchasePost;
 
 import java.util.Optional;
 
 public interface PurchaseRepository {
-    Purchase save(Purchase purchase);
-    Optional<Purchase> findByBoardId(Long boardId);
+    PurchasePost save(PurchasePost purchasePost);
+    Optional<PurchasePost> findByBoardId(Long boardId);
     void deleteByBoardId(Long boardId);
 }

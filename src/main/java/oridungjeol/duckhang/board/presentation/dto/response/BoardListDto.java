@@ -1,4 +1,4 @@
-package oridungjeol.duckhang.board.presentation.dto;
+package oridungjeol.duckhang.board.presentation.dto.response;
 
 import lombok.Builder;
 
@@ -10,5 +10,5 @@ public record BoardListDto(
         String title,
         String imageUrl,
         LocalDateTime createdAt
-) implements BoardListResponseDto{
+) implements BoardListResponseDto {
 }

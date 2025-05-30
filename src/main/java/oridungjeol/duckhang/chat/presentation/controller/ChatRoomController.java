@@ -11,6 +11,7 @@ import oridungjeol.duckhang.auth.domain.model.CustomPrincipal;
 import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.application.dto.ChatParam;
 import oridungjeol.duckhang.chat.application.dto.ChatRoom;
+import oridungjeol.duckhang.chat.application.dto.ChatRoomParticipant;
 import oridungjeol.duckhang.chat.application.service.ChatService;
 
 import java.util.List;
@@ -66,7 +67,12 @@ public class ChatRoomController {
             @AuthenticationPrincipal CustomPrincipal uuid,
             @RequestBody ChatParam chatParam
     ) {
-        return chatService.createChatRoom(uuid.getName(), chatParam);
+        ChatRoom existChatRoom = chatService.joinChatRoom(uuid.getName(), chatParam);
+        if (existChatRoom == null) {
+            return chatService.createChatRoom(uuid.getName(), chatParam);
+        } else {
+            return existChatRoom;
+        }
     }
 
     @PostMapping("/upload/image")

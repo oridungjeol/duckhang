@@ -1,7 +1,6 @@
-package oridungjeol.duckhang.board.presentation.dto;
+package oridungjeol.duckhang.board.presentation.dto.request;
 
 import lombok.Getter;
-import oridungjeol.duckhang.board.domain.BoardType;
 
 @Getter
 public class RequestDto {
@@ -9,4 +8,5 @@ public class RequestDto {
     private String content;
     private String imageUrl;
     private int price;
+    private int deposit;
 }

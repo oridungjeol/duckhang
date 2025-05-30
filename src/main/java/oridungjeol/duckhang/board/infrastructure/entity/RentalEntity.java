@@ -1,27 +1,27 @@
 package oridungjeol.duckhang.board.infrastructure.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "rental")
+@Entity
 public class RentalEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(name = "board_id")
+    @Id
     private Long boardId;
 
     private int price;
 
     private int deposit;
 
-    private LocalDate period;
-
+    @Builder
+    public RentalEntity(Long boardId, int price, int deposit) {
+        this.boardId = boardId;
+        this.price = price;
+        this.deposit = deposit;
+    }
 }
