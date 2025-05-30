@@ -38,17 +38,21 @@ public class ChatService {
     private final ChatMapper chatMapper;
     private final ChatRoomMapper chatRoomMapper;
     private final ChatRepository chatRepository;
+    private final ChatParticipantRepository chatParticipantRepository;
+    private final UserJpaRepository userJpaRepository;
 
     private final FirebaseStorageService firebaseStorageService;
 
     private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatESRepository chatESRepository, ChatMapper chatMapper, JwtParser jwtParser, ChatRoomMapper chatRoomMapper, ChatRepository chatRepository, FirebaseStorageService firebaseStorageService) {
+    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatESRepository chatESRepository, ChatMapper chatMapper, JwtParser jwtParser, ChatRoomMapper chatRoomMapper, ChatRepository chatRepository, ChatParticipantRepository chatParticipantRepository, UserJpaRepository userJpaRepository, FirebaseStorageService firebaseStorageService) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.chatESRepository = chatESRepository;
         this.chatMapper = chatMapper;
         this.chatRoomMapper = chatRoomMapper;
         this.chatRepository = chatRepository;
+        this.chatParticipantRepository = chatParticipantRepository;
+        this.userJpaRepository = userJpaRepository;
         this.firebaseStorageService = firebaseStorageService;
     }
 
