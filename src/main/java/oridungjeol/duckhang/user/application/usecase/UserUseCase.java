@@ -53,6 +53,9 @@ public class UserUseCase {
      * @param updatePrivacyRequest 수정된 개인정보 내용
      */
     public void updatePrivacy(String userId, UpdatePrivacyRequest updatePrivacyRequest) {
+        if (!userId.equals(updatePrivacyRequest.getUserId())) {
+            throw new IllegalArgumentException("본인 개인정보만 수정할 수 있습니다.");
+        }
         UUID uuid = UUID.fromString(userId);
         userService.updatePrivacy(uuid, updatePrivacyRequest);
     }
@@ -70,7 +73,10 @@ public class UserUseCase {
      * @param userId 삭제할 사용자의 UUID 문자열
      */
     @Transactional
-    public void deleteUser(String userId) {
+    public void deleteUser(String userId, String deleteUserId) {
+        if (!userId.equals(deleteUserId)) {
+            throw new IllegalArgumentException("본인 계정만 삭제할 수 있습니다.");
+        }
         UUID uuid = UUID.fromString(userId);
         kakaoApiClient.unlinkUserWithAccessToken(authJpaRepository.findByUuid(uuid).get().getProviderId());
         userService.deleteUser(UUID.fromString(userId));

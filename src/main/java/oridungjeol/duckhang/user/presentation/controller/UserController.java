@@ -38,7 +38,6 @@ public class UserController {
     }
 
     @PatchMapping("/privacy")
-    @PreAuthorize("#uuid == authentication.principal.name")
     public void updatePrivacy(
             @AuthenticationPrincipal CustomPrincipal principal,
             @RequestBody UpdatePrivacyRequest updatePrivacyRequest
@@ -47,10 +46,10 @@ public class UserController {
     }
 
     @DeleteMapping()
-    @PreAuthorize("#userId == authentication.principal.name")
     public void delete(
+            @AuthenticationPrincipal CustomPrincipal principal,
             @RequestParam String userId
     ) {
-        userUseCase.deleteUser(userId);
+        userUseCase.deleteUser(principal.getName(), userId);
     }
 }
