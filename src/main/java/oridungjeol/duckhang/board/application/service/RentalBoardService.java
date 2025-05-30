@@ -10,9 +10,14 @@ import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.application.port.out.RentalRepository;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.domain.BoardType;
+import oridungjeol.duckhang.board.domain.PurchasePost;
 import oridungjeol.duckhang.board.domain.RentalPost;
 import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
 import oridungjeol.duckhang.board.infrastructure.elasticsearch.repository.BoardDocumentRepository;
+import oridungjeol.duckhang.board.infrastructure.redis.domain.BoardEventDto;
+import oridungjeol.duckhang.board.infrastructure.redis.infrastructure.BoardStreamPublisher;
+import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventDtoMapper;
+import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventType;
 import oridungjeol.duckhang.board.presentation.dto.request.RequestDto;
 import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
 import oridungjeol.duckhang.board.presentation.dto.response.RentalDetailDto;
@@ -29,7 +34,7 @@ public class RentalBoardService implements BoardUseCase {
     private final BoardRepository boardRepository;
     private final RentalRepository rentalRepository;
     private final UserJpaRepository userJpaRepository;
-    private final BoardDocumentRepository boardDocumentRepository;
+    private final BoardStreamPublisher boardStreamPublisher;
 
     @Override
     public boolean supportBoardType(BoardType boardType) {
@@ -48,17 +53,8 @@ public class RentalBoardService implements BoardUseCase {
         RentalPost rentalPost = new RentalPost(savedBoard.getId(), requestDto.getPrice(), requestDto.getDeposit());
         rentalRepository.save(rentalPost);
 
-        BoardDocument document = BoardDocument.builder()
-                .id(savedBoard.getId())
-                .authorUuid(savedBoard.getAuthorUuid())
-                .title(savedBoard.getTitle())
-                .content(savedBoard.getContent())
-                .imageUrl(savedBoard.getImageUrl())
-                .createdAt(savedBoard.getCreatedAt())
-                .boardType(savedBoard.getBoardType())
-                .build();
-
-        boardDocumentRepository.save(document);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard, rentalPost, BoardEventType.CREATE);
+        boardStreamPublisher.publishBoard(eventDto);
 
         return savedBoard.getId();
     }
@@ -110,6 +106,9 @@ public class RentalBoardService implements BoardUseCase {
         boardRepository.save(board);
         rentalRepository.save(rentalPost);
 
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, rentalPost, BoardEventType.UPDATE);
+        boardStreamPublisher.publishBoard(eventDto);
+
         return board.getId();
     }
 
@@ -118,6 +117,12 @@ public class RentalBoardService implements BoardUseCase {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
         board.validateAuthor(authorUuid);
+
+        RentalPost rentalPost = rentalRepository.findByBoardId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
+
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, rentalPost, BoardEventType.DELETE);
+        boardStreamPublisher.publishBoard(eventDto);
 
         rentalRepository.deleteByBoardId(id);
         boardRepository.deleteById(id);

@@ -18,4 +18,9 @@ public class PurchasePost implements PricedBoardDetail{
             this.price = price;
         }
     }
+
+    @Override
+    public int getDeposit() {
+        return 0;
+    }
 }

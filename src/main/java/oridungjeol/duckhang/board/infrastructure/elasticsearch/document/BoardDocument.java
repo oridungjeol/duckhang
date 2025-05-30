@@ -33,6 +33,8 @@ public class BoardDocument {
 
     private int price;
 
+    private int deposit;
+
     @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;

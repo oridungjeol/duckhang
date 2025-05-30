@@ -73,6 +73,7 @@ public class BoardStreamConsumer {
                                     .createdAt(LocalDateTime.parse((String) value.get("createdAt")))
                                     .boardType(BoardType.valueOf((String) value.get("boardType")))
                                     .price(Integer.parseInt((String) value.get("price")))
+                                    .deposit(Integer.parseInt((String) value.get("deposit")))
                                     .build();
 
                             boardDocumentRepository.save(doc);

@@ -63,6 +63,10 @@ public class PaymentService {
         PaymentEntity payment = paymentAdapter.findByOrderId(dto.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("주문 없음"));
 
+        if ("PAID".equalsIgnoreCase(payment.getStatus())) {
+            throw new IllegalStateException("이미 결제 완료된 주문입니다.");
+        }
+
         if (payment.getAmount() != dto.getAmount()) {
             throw new IllegalArgumentException("결제 금액 불일치");
         }

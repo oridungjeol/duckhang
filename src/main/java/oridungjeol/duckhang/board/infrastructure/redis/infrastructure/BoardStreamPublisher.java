@@ -24,6 +24,7 @@ public class BoardStreamPublisher {
         message.put("boardType", String.valueOf(dto.getBoardType()));
         message.put("price", String.valueOf(dto.getPrice()));
         message.put("eventType" , String.valueOf(dto.getEventType()));
+        message.put("deposit", String.valueOf(dto.getDeposit()));
 
         redisTemplate.opsForStream().add("board-stream", message);
     }

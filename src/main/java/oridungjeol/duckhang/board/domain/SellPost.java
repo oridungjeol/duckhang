@@ -20,4 +20,9 @@ public class SellPost implements PricedBoardDetail{
             this.price = price;
         }
     }
+
+    @Override
+    public int getDeposit() {
+        return 0;
+    }
 }

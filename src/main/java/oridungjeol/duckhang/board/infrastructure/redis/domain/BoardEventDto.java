@@ -1,6 +1,7 @@
 package oridungjeol.duckhang.board.infrastructure.redis.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import oridungjeol.duckhang.board.domain.BoardType;
 import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventType;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
-@AllArgsConstructor
+@Builder
 public class BoardEventDto {
     private Long id;
     private UUID authorUuid;
@@ -20,4 +21,5 @@ public class BoardEventDto {
     private LocalDateTime createdAt;
     private int price;
     private BoardEventType eventType;
+    private int deposit;
 }
