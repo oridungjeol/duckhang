@@ -10,5 +10,6 @@ import lombok.Setter;
 public class ProfileResponse {
     private String uuid;
     private String nickname;
+    private String profileImageUrl;
     private double scope;
 }

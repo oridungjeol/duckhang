@@ -27,6 +27,7 @@ public class UserService {
         return ProfileResponse.builder()
                 .uuid(uuid.toString())
                 .nickname(user.getNickname())
+                .profileImageUrl(user.getProfileImageUrl())
                 .scope(user.getScope())
                 .build();
     }
