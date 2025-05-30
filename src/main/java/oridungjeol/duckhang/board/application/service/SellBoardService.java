@@ -59,8 +59,8 @@ public class SellBoardService implements BoardUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BoardListResponseDto> getAllBoards() {
-        List<Board> boards = boardRepository.findAllByBoardType(BoardType.SELL);
+    public List<BoardListResponseDto> getAllBoards(BoardType boardType) {
+        List<Board> boards = boardRepository.findAllByBoardType(boardType);
 
         return boards.stream()
                 .map(board-> {
@@ -70,7 +70,7 @@ public class SellBoardService implements BoardUseCase {
                     User user = userJpaRepository.findByUuid(board.getAuthorUuid())
                             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-                    return SellDtoMapper.toTradeListDto(board, sellPost, user);
+                    return SellDtoMapper.toTradeListDto(board, sellPost);
                 })
                 .toList();
     }

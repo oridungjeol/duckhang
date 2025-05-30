@@ -16,6 +16,15 @@ public class BoardDtoMapper {
                 .build();
     }
 
+    public static BoardListResponseDto toBoardListDto(Board board) {
+        return BoardListDto.builder()
+                .id(board.getId())
+                .title(board.getTitle())
+                .imageUrl(board.getImageUrl())
+                .createdAt(board.getCreatedAt())
+                .build();
+    }
+
     public static BoardDetailDto toBoardDetailDto(Board board, User user) {
         return BoardDetailDto.builder()
                 .id(board.getId())

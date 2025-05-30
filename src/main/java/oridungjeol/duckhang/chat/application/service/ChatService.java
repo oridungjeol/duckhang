@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import oridungjeol.duckhang.auth.infrastructure.jwt.JwtParser;
 import oridungjeol.duckhang.chat.application.domain.MessageType;
 import oridungjeol.duckhang.chat.application.dto.Chat;
@@ -21,6 +22,7 @@ import oridungjeol.duckhang.chat.infrastructure.mapper.ChatMapper;
 import oridungjeol.duckhang.chat.infrastructure.mapper.ChatRoomMapper;
 import oridungjeol.duckhang.chat.infrastructure.repository.ChatParticipantRepository;
 import oridungjeol.duckhang.chat.infrastructure.repository.ChatRepository;
+import oridungjeol.duckhang.common.firebase.storage.FirebaseStorageService;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
 
@@ -39,9 +41,11 @@ public class ChatService {
     private final ChatParticipantRepository chatParticipantRepository;
     private final UserJpaRepository userJpaRepository;
 
+    private final FirebaseStorageService firebaseStorageService;
+
     private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatESRepository chatESRepository, ChatMapper chatMapper, JwtParser jwtParser, ChatRoomMapper chatRoomMapper, ChatRepository chatRepository, ChatParticipantRepository chatParticipantRepository, UserJpaRepository userJpaRepository) {
+    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatESRepository chatESRepository, ChatMapper chatMapper, JwtParser jwtParser, ChatRoomMapper chatRoomMapper, ChatRepository chatRepository, ChatParticipantRepository chatParticipantRepository, UserJpaRepository userJpaRepository, FirebaseStorageService firebaseStorageService) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.chatESRepository = chatESRepository;
         this.chatMapper = chatMapper;
@@ -49,6 +53,7 @@ public class ChatService {
         this.chatRepository = chatRepository;
         this.chatParticipantRepository = chatParticipantRepository;
         this.userJpaRepository = userJpaRepository;
+        this.firebaseStorageService = firebaseStorageService;
     }
 
     /**
@@ -72,6 +77,12 @@ public class ChatService {
         } catch (Exception e) {
             log.error("메시지 broadcast 중 오류 발생");
         }
+    }
+
+    public String uploadImage(MultipartFile image) {
+        String image_url = firebaseStorageService.upload(image);
+        log.info(image_url);
+        return image_url;
     }
 
     /**

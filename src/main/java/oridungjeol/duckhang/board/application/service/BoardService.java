@@ -56,15 +56,11 @@ public class BoardService implements BoardUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BoardListResponseDto> getAllBoards() {
-        List<Board> boards = boardRepository.findAllByBoardType(BoardType.EXCHANGE);
+    public List<BoardListResponseDto> getAllBoards(BoardType boardType) {
+        List<Board> boards = boardRepository.findAllByBoardType(boardType);
 
         return boards.stream()
-                .map(board -> {
-                    User user = userJpaRepository.findByUuid(board.getAuthorUuid())
-                            .orElseThrow(() -> new EntityNotFoundException("User not found"));
-                    return BoardDtoMapper.toBoardListDto(board, user);
-                })
+                .map(BoardDtoMapper::toBoardListDto)
                 .toList();
     }
 
@@ -75,7 +71,6 @@ public class BoardService implements BoardUseCase {
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
         User user = userJpaRepository.findByUuid(board.getAuthorUuid())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
         return BoardDtoMapper.toBoardDetailDto(board, user);
     }
 
