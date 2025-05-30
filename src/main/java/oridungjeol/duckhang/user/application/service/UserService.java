@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import oridungjeol.duckhang.auth.infrastructure.repository.AuthJpaRepository;
+import oridungjeol.duckhang.common.firebase.storage.FirebaseStorageService;
 import oridungjeol.duckhang.user.domain.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
 import oridungjeol.duckhang.user.presentation.dto.ProfileResponse;
@@ -19,12 +20,14 @@ public class UserService {
 
     private final UserJpaRepository userJpaRepository;
     private final AuthJpaRepository authJpaRepository;
+    private final FirebaseStorageService firebaseStorageService;
 
     public ProfileResponse getProfile(UUID uuid) {
         User user = UserConverter.toDomain(userJpaRepository.findByUuid(uuid).get());
         return ProfileResponse.builder()
                 .uuid(uuid.toString())
                 .nickname(user.getNickname())
+                .profileImageUrl(user.getProfileImageUrl())
                 .scope(user.getScope())
                 .build();
     }
@@ -47,6 +50,7 @@ public class UserService {
                 .uuid(uuid)
                 .nickname(request.getNickname() != null ? request.getNickname() : originalUser.getNickname())
                 .name(originalUser.getName())
+                .profileImageUrl(request.getProfileImage() != null ? firebaseStorageService.upload(request.getProfileImage()) : originalUser.getProfileImageUrl())
                 .phoneNumber(originalUser.getPhoneNumber())
                 .address(originalUser.getAddress())
                 .email(originalUser.getEmail())
