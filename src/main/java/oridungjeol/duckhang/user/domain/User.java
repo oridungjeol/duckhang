@@ -11,6 +11,7 @@ public class User {
     private UUID uuid;
     private String nickname;
     private String name;
+    private String profileImageUrl;
     private String phoneNumber;
     private String address;
     private String email;
