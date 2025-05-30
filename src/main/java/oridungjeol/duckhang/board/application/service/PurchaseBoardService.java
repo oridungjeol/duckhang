@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import oridungjeol.duckhang.board.infrastructure.redis.BoardStreamPublisher;
 import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
 import oridungjeol.duckhang.board.infrastructure.redis.domain.BoardEventDto;
 import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventDtoMapper;

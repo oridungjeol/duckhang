@@ -6,5 +6,5 @@ public enum MessageType {
     IMAGE,
     PAY,
     MAP,
-    PAYRESULT,
+    REFUND
 }
