@@ -65,18 +65,14 @@ public class RentalBoardService implements BoardUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BoardListResponseDto> getAllBoards() {
-        List<Board> boards = boardRepository.findAllByBoardType(BoardType.RENTAL);
+    public List<BoardListResponseDto> getAllBoards(BoardType boardType) {
+        List<Board> boards = boardRepository.findAllByBoardType(boardType);
 
         return boards.stream()
                 .map(board-> {
                     RentalPost rentalPost = rentalRepository.findByBoardId(board.getId())
                             .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
-
-                    User user = userJpaRepository.findByUuid(board.getAuthorUuid())
-                            .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-                    return RentalDtoMapper.toRentalListDto(board, rentalPost, user);
+                    return RentalDtoMapper.toRentalListDto(board, rentalPost);
                 })
                 .toList();
     }

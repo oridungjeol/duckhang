@@ -8,7 +8,7 @@ import oridungjeol.duckhang.board.presentation.dto.response.RentalListDto;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 
 public class RentalDtoMapper {
-    public static BoardListResponseDto toRentalListDto(Board board, RentalPost rentalPost, User user) {
+    public static BoardListResponseDto toRentalListDto(Board board, RentalPost rentalPost) {
         return RentalListDto.builder()
                 .id(board.getId())
                 .title(board.getTitle())

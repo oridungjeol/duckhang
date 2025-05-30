@@ -8,7 +8,7 @@ import oridungjeol.duckhang.board.domain.SellPost;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 
 public class SellDtoMapper {
-    public static BoardListResponseDto toTradeListDto(Board board, SellPost sellPost, User user) {
+    public static BoardListResponseDto toTradeListDto(Board board, SellPost sellPost) {
         return TradeListDto.builder()
                 .id(board.getId())
                 .title(board.getTitle())

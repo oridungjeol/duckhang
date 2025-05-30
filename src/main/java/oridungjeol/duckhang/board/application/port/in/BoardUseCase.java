@@ -15,5 +15,5 @@ public interface BoardUseCase {
     void deleteBoard(UUID authorUuid, Long id);
 
     BoardResponseDto getDetailBoard(Long boardId);
-    List<BoardListResponseDto> getAllBoards();
+    List<BoardListResponseDto> getAllBoards(BoardType boardType);
 }

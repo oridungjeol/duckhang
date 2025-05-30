@@ -8,7 +8,7 @@ import oridungjeol.duckhang.board.domain.PurchasePost;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 
 public class PurchaseDtoMapper {
-    public static BoardListResponseDto toTradeListDto(Board board, PurchasePost purchasePost, User user) {
+    public static BoardListResponseDto toTradeListDto(Board board, PurchasePost purchasePost) {
         return TradeListDto.builder()
                 .id(board.getId())
                 .title(board.getTitle())
