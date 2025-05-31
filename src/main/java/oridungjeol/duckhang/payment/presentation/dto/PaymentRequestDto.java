@@ -9,4 +9,6 @@ public class PaymentRequestDto {
     private int amount;
     private int boardId;
     private String type;
+    private String roomId;
+    private String userUuid;
 }

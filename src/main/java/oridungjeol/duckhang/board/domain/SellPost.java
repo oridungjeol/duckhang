@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SellPost {
+public class SellPost implements PricedBoardDetail{
     private Long boardId;
     private int price;
 
@@ -19,5 +19,10 @@ public class SellPost {
         if (price != null && price > 0) {
             this.price = price;
         }
+    }
+
+    @Override
+    public int getDeposit() {
+        return 0;
     }
 }

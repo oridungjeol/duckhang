@@ -4,6 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import oridungjeol.duckhang.board.infrastructure.redis.domain.BoardEventDto;
+import oridungjeol.duckhang.board.infrastructure.redis.infrastructure.BoardStreamPublisher;
+import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventDtoMapper;
+import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventType;
 import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
 import oridungjeol.duckhang.board.presentation.dto.response.BoardResponseDto;
 import oridungjeol.duckhang.board.application.mapper.BoardDtoMapper;
@@ -11,8 +15,6 @@ import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
 import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.domain.BoardType;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.repository.BoardDocumentRepository;
 import oridungjeol.duckhang.board.presentation.dto.request.RequestDto;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
@@ -25,7 +27,7 @@ import java.util.UUID;
 public class BoardService implements BoardUseCase {
     private final BoardRepository boardRepository;
     private final UserJpaRepository userJpaRepository;
-    private final BoardDocumentRepository boardDocumentRepository;
+    private final BoardStreamPublisher boardStreamPublisher;
 
     @Override
     public boolean supportBoardType(BoardType boardType) {
@@ -46,17 +48,8 @@ public class BoardService implements BoardUseCase {
         Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl(), boardType);
         Board savedBoard = boardRepository.save(board);
 
-        BoardDocument document = BoardDocument.builder()
-                .id(savedBoard.getId())
-                .authorUuid(savedBoard.getAuthorUuid())
-                .title(savedBoard.getTitle())
-                .content(savedBoard.getContent())
-                .imageUrl(savedBoard.getImageUrl())
-                .createdAt(savedBoard.getCreatedAt())
-                .boardType(savedBoard.getBoardType())
-                .build();
-
-        boardDocumentRepository.save(document);
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard , BoardEventType.CREATE);
+        boardStreamPublisher.publishBoard(eventDto);
 
         return savedBoard.getId();
     }
@@ -92,6 +85,9 @@ public class BoardService implements BoardUseCase {
 
         boardRepository.save(board);
 
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board , BoardEventType.CREATE);
+        boardStreamPublisher.publishBoard(eventDto);
+
         return board.getId();
     }
 
@@ -100,6 +96,9 @@ public class BoardService implements BoardUseCase {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
         board.validateAuthor(authorUuid);
+
+        BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, BoardEventType.DELETE);
+        boardStreamPublisher.publishBoard(eventDto);
 
         boardRepository.deleteById(id);
     }
