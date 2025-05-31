@@ -8,6 +8,10 @@ public class UserConverter {
         return oridungjeol.duckhang.user.infrastructure.entity.User.builder()
                 .uuid(user.getUuid())
                 .nickname(user.getNickname())
+                .name(user.getName())
+                .profileImageUrl(user.getProfileImageUrl())
+                .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
                 .email(user.getEmail())
                 .scope(user.getScope())
                 .build();
@@ -17,6 +21,10 @@ public class UserConverter {
         return User.builder()
                 .uuid(user.getUuid())
                 .nickname(user.getNickname())
+                .name(user.getName())
+                .profileImageUrl(user.getProfileImageUrl())
+                .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
                 .email(user.getEmail())
                 .scope(user.getScope())
                 .build();
