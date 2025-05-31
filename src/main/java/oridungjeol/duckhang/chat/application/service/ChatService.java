@@ -9,6 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import oridungjeol.duckhang.auth.infrastructure.jwt.JwtParser;
+import oridungjeol.duckhang.chat.application.domain.FraudType;
 import oridungjeol.duckhang.chat.application.domain.MessageType;
 import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.application.dto.ChatParam;
@@ -79,6 +80,11 @@ public class ChatService {
         }
     }
 
+    /**
+     * firebase에 이미지 업로드 후 url을 리턴합니다.
+     * @param image
+     * @return image url
+     */
     public String uploadImage(MultipartFile image) {
         String image_url = firebaseStorageService.upload(image);
         log.info(image_url);
@@ -102,6 +108,67 @@ public class ChatService {
         }
 
         return chatList;
+    }
+
+    /**
+     * 설정된 키워드를 기반으로 사기 감지
+     * @param room_id
+     * @return
+     */
+    public List<String> checkFraud(long room_id) {
+        String[] external_keywords = {"카카오톡", "카톡", "텔레그램", "오픈채팅", "옾챗", "010", "문자", "ㅋㅋㅇㅌ",
+                "전화번호", "카톡아이디", "톡디"};
+        String[] deposit_keywords = {"선입금", "보증금", "페이팔"};
+        String[] personal_info_keywords = {"주민등록번호", "신분증", "인증번호", "카드번호", "비밀번호"};
+
+        List<String> alert_list = new ArrayList<>();
+
+        List<ChatDocument> chatDocumentList = chatESRepository.findAllByRoomId(room_id);
+
+        boolean flag1 = false;
+        for (ChatDocument chatDocument : chatDocumentList) {
+            for (String external_keyword : external_keywords) {
+                if (chatDocument.getContent().contains(external_keyword)) {
+                    alert_list.add(String.valueOf(FraudType.EXTERNAL));
+                    flag1 = true;
+                    break;
+                }
+            }
+            if (flag1) {
+                break;
+            }
+        }
+
+        boolean flag2 = false;
+        for (ChatDocument chatDocument : chatDocumentList) {
+            for (String deposit_keyword : deposit_keywords) {
+                if (chatDocument.getContent().contains(deposit_keyword)) {
+                    alert_list.add(String.valueOf(FraudType.DEPOSIT));
+                    flag2 = true;
+                    break;
+                }
+            }
+            if (flag2) {
+                break;
+            }
+        }
+
+        boolean flag3 = false;
+        for (ChatDocument chatDocument : chatDocumentList) {
+            for (String personal_info_keyword : personal_info_keywords) {
+                if (chatDocument.getContent().contains(personal_info_keyword)) {
+                    alert_list.add(String.valueOf(FraudType.PERSONAL_INFO));
+                    flag3 = true;
+                    break;
+                }
+            }
+            if (flag3) {
+                break;
+            }
+        }
+
+        System.out.println(alert_list);
+        return alert_list;
     }
 
     /**

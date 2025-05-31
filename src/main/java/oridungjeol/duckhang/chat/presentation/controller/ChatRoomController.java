@@ -75,8 +75,18 @@ public class ChatRoomController {
         }
     }
 
+    /**
+     * 이미지를 firebase에 업로드 후 url을 리턴합니다.
+     * @param image
+     * @return image url
+     */
     @PostMapping("/upload/image")
     public String uploadImage(@RequestParam("image") MultipartFile image) {
         return chatService.uploadImage(image);
+    }
+
+    @GetMapping("/fraud/{room_id}")
+    public List<String> checkFraud(@PathVariable("room_id") long room_id) {
+        return chatService.checkFraud(room_id);
     }
 }
