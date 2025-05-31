@@ -1,8 +1,10 @@
 package oridungjeol.duckhang.board.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class PurchasePost implements PricedBoardDetail{
     private Long boardId;
     private int price;

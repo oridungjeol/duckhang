@@ -115,7 +115,7 @@ public class RentalBoardService implements BoardUseCase {
         board.validateAuthor(authorUuid);
 
         RentalPost rentalPost = rentalRepository.findByBoardId(id)
-                .orElseThrow(() -> new EntityNotFoundException("Purchase not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
 
         BoardEventDto eventDto = BoardEventDtoMapper.toDto(board, rentalPost, BoardEventType.DELETE);
         boardStreamPublisher.publishBoard(eventDto);
