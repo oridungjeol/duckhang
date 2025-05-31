@@ -3,7 +3,7 @@ package oridungjeol.duckhang.board.domain;
 import lombok.Getter;
 
 @Getter
-public class PurchasePost {
+public class PurchasePost implements PricedBoardDetail{
     private Long boardId;
     private int price;
 
@@ -17,5 +17,10 @@ public class PurchasePost {
         if (price != null && price > 0) {
             this.price = price;
         }
+    }
+
+    @Override
+    public int getDeposit() {
+        return 0;
     }
 }
