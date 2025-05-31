@@ -27,6 +27,7 @@ import oridungjeol.duckhang.common.firebase.storage.FirebaseStorageService;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +116,7 @@ public class ChatService {
      * @param room_id
      * @return
      */
-    public List<String> checkFraud(long room_id) {
+    public List<String> checkFraud(long room_id) throws IOException {
         String[] external_keywords = {"카카오톡", "카톡", "텔레그램", "오픈채팅", "옾챗", "010", "문자", "ㅋㅋㅇㅌ",
                 "전화번호", "카톡아이디", "톡디"};
         String[] deposit_keywords = {"선입금", "보증금", "페이팔"};

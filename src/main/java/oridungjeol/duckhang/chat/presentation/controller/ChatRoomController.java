@@ -14,6 +14,7 @@ import oridungjeol.duckhang.chat.application.dto.ChatRoom;
 import oridungjeol.duckhang.chat.application.dto.ChatRoomParticipant;
 import oridungjeol.duckhang.chat.application.service.ChatService;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequestMapping("/chat")
@@ -86,7 +87,7 @@ public class ChatRoomController {
     }
 
     @GetMapping("/fraud/{room_id}")
-    public List<String> checkFraud(@PathVariable("room_id") long room_id) {
+    public List<String> checkFraud(@PathVariable("room_id") long room_id) throws IOException {
         return chatService.checkFraud(room_id);
     }
 }
