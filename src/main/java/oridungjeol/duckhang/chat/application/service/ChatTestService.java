@@ -19,6 +19,8 @@ public class ChatTestService {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     public List<String> checkFraud() throws IOException {
+        long start = System.currentTimeMillis();
+
         String[] external_keywords = {"카카오톡", "카톡", "텔레그램", "오픈채팅", "옾챗", "010", "문자", "ㅋㅋㅇㅌ",
                 "전화번호", "카톡아이디", "톡디"};
         String[] deposit_keywords = {"선입금", "보증금", "페이팔"};
@@ -132,6 +134,10 @@ public class ChatTestService {
         }
 
         System.out.println(alert_list);
+
+        long end = System.currentTimeMillis();
+        System.out.println("running time: " + (end - start) + "ms");
+
         return alert_list;
     }
 
