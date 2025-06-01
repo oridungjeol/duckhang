@@ -19,7 +19,7 @@ public class ChatRoomTestController {
     }
 
     @GetMapping("/test/fraud")
-    public List<String> checkFraud() throws IOException {
+    public long checkFraud() throws IOException {
         return chatTestService.checkFraud();
     }
 }

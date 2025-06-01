@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName="chatting")
+@Document(indexName="chatting_dataset")
 public class ChatDocument {
     @Id
     private String id;
@@ -32,7 +32,7 @@ public class ChatDocument {
     private String content;
 
     @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
     private long roomId;
