@@ -2,6 +2,7 @@ package oridungjeol.duckhang.board.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,16 +67,19 @@ public class RentalBoardService implements BoardUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BoardListResponseDto> getAllBoards(BoardType boardType) {
-        List<Board> boards = boardRepository.findAllByBoardType(boardType);
+    public Page<BoardListResponseDto> getAllBoards(BoardType boardType, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Board> boards = boardRepository.findAllByBoardType(boardType, pageable);
 
-        return boards.stream()
-                .map(board-> {
+        List<BoardListResponseDto> dtoList = boards.stream()
+                .map(board -> {
                     RentalPost rentalPost = rentalRepository.findByBoardId(board.getId())
                             .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
                     return RentalDtoMapper.toRentalListDto(board, rentalPost);
                 })
                 .toList();
+
+        return new PageImpl<>(dtoList, pageable, boards.getTotalElements());
     }
 
     @Override

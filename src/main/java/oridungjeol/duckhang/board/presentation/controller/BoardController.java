@@ -1,6 +1,7 @@
 package oridungjeol.duckhang.board.presentation.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,9 +42,12 @@ public class BoardController {
     }
 
     @GetMapping("/{boardType}")
-    public ResponseEntity<List<BoardListResponseDto>> findAllBoards(@PathVariable BoardType boardType) {
+    public ResponseEntity<Page<BoardListResponseDto>> findAllBoards(
+            @PathVariable BoardType boardType,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
         BoardUseCase boardUseCase = boardUsecaseFactory.getBoardUseCase(boardType);
-        List<BoardListResponseDto> boards = boardUseCase.getAllBoards(boardType);
+        Page<BoardListResponseDto> boards = boardUseCase.getAllBoards(boardType, page, size);
         return ResponseEntity.ok(boards);
     }
 

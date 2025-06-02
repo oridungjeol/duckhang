@@ -2,6 +2,10 @@ package oridungjeol.duckhang.board.application.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,12 +70,11 @@ public class BoardService implements BoardUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BoardListResponseDto> getAllBoards(BoardType boardType) {
-        List<Board> boards = boardRepository.findAllByBoardType(boardType);
+    public Page<BoardListResponseDto> getAllBoards(BoardType boardType, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Board> boards = boardRepository.findAllByBoardType(boardType, pageable);
 
-        return boards.stream()
-                .map(BoardDtoMapper::toBoardListDto)
-                .toList();
+        return boards.map(BoardDtoMapper::toBoardListDto);
     }
 
     @Override
