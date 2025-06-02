@@ -1,5 +1,6 @@
 package oridungjeol.duckhang.chat.application.service;
 
+import co.elastic.clients.util.Pair;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,12 +10,15 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import oridungjeol.duckhang.auth.infrastructure.jwt.JwtParser;
+import oridungjeol.duckhang.chat.application.domain.FraudType;
 import oridungjeol.duckhang.chat.application.domain.MessageType;
 import oridungjeol.duckhang.chat.application.dto.Chat;
 import oridungjeol.duckhang.chat.application.dto.ChatParam;
 import oridungjeol.duckhang.chat.application.dto.ChatRoom;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.ChatDocument;
+import oridungjeol.duckhang.chat.infrastructure.elasticsearch.document.FraudDocument;
 import oridungjeol.duckhang.chat.infrastructure.elasticsearch.repository.ChatESRepository;
+import oridungjeol.duckhang.chat.infrastructure.elasticsearch.repository.ChatESRepositoryNative;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatRoomEntity;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatRoomParticipantEntity;
 import oridungjeol.duckhang.chat.infrastructure.entity.ChatRoomParticipantPK;
@@ -26,6 +30,7 @@ import oridungjeol.duckhang.common.firebase.storage.FirebaseStorageService;
 import oridungjeol.duckhang.user.infrastructure.entity.User;
 import oridungjeol.duckhang.user.infrastructure.repository.UserJpaRepository;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +45,13 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatParticipantRepository chatParticipantRepository;
     private final UserJpaRepository userJpaRepository;
+    private final ChatESRepositoryNative chatESRepositoryNative;
 
     private final FirebaseStorageService firebaseStorageService;
 
     private Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatESRepository chatESRepository, ChatMapper chatMapper, JwtParser jwtParser, ChatRoomMapper chatRoomMapper, ChatRepository chatRepository, ChatParticipantRepository chatParticipantRepository, UserJpaRepository userJpaRepository, FirebaseStorageService firebaseStorageService) {
+    public ChatService(SimpMessagingTemplate simpMessagingTemplate, ChatESRepository chatESRepository, ChatMapper chatMapper, JwtParser jwtParser, ChatRoomMapper chatRoomMapper, ChatRepository chatRepository, ChatParticipantRepository chatParticipantRepository, UserJpaRepository userJpaRepository, ChatESRepositoryNative chatESRepositoryNative, FirebaseStorageService firebaseStorageService) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.chatESRepository = chatESRepository;
         this.chatMapper = chatMapper;
@@ -53,6 +59,7 @@ public class ChatService {
         this.chatRepository = chatRepository;
         this.chatParticipantRepository = chatParticipantRepository;
         this.userJpaRepository = userJpaRepository;
+        this.chatESRepositoryNative = chatESRepositoryNative;
         this.firebaseStorageService = firebaseStorageService;
     }
 
@@ -77,8 +84,87 @@ public class ChatService {
         } catch (Exception e) {
             log.error("메시지 broadcast 중 오류 발생");
         }
+
+        if (message.getType() == MessageType.TEXT) {
+            FraudType response = filterFraud(message.getContent());
+
+            if (response != FraudType.NOT_FRAUD) {
+                Chat warnning = Chat.builder()
+                        .type(MessageType.WARNNING)
+                        .author_uuid(message.getAuthor_uuid())
+                        .content(String.valueOf(response))
+                        .created_at(LocalDateTime.now())
+                        .room_id(message.getRoom_id())
+                        .build();
+
+                //save
+                ChatDocument chatDocument = chatMapper.toChatDocument(warnning);
+                chatESRepository.save(chatDocument);
+
+                //websocket - broadcast
+                String destination = "/topic/chat/" + message.getRoom_id();
+                simpMessagingTemplate.convertAndSend(destination, warnning);
+            }
+        }
     }
 
+    /**
+     * 유사한 문장 중 의미 없는 값(score가 낮은 값) 필터링
+     * 각 카테고리의 score를 합산하여 5 이상의 최댓값을 label로 설정합니다.
+     * @param content 검사 문장
+     * @return FraudType 사기 타입
+     * @throws IOException
+     */
+    public FraudType filterFraud(String content) throws IOException {
+        List<Pair<FraudDocument, Float>> results = chatESRepositoryNative.searchFraud(content);
+
+        float external_score = 0.0f;
+        float deposit_score = 0.0f;
+        float personal_score = 0.0f;
+
+        for (Pair<FraudDocument, Float> pair : results) {
+            FraudDocument fraudDocument = pair.key();
+            Float score = pair.value();
+
+            FraudType fraud_type = fraudDocument.getFraud_type();
+            if (fraud_type == FraudType.EXTERNAL) {
+                external_score += score;
+            }
+            else if (fraud_type == FraudType.DEPOSIT) {
+                deposit_score += score;
+            }
+            else if (fraud_type == FraudType.PERSONAL_INFO) {
+                personal_score += score;
+            }
+        }
+
+        if (external_score > 5 &&
+                external_score > deposit_score &&
+                external_score > personal_score
+        ) {
+            return FraudType.EXTERNAL;
+        }
+        else if (deposit_score > 5 &&
+                deposit_score >= external_score &&
+                deposit_score > personal_score
+        ) {
+            return FraudType.DEPOSIT;
+        }
+        else if (personal_score > 5 &&
+                personal_score >= external_score &&
+                personal_score >= deposit_score
+        ) {
+            return FraudType.PERSONAL_INFO;
+        }
+
+        return FraudType.NOT_FRAUD;
+    }
+
+    /**
+     * firebase에 이미지 업로드 후 url을 리턴합니다.
+     * @param image
+     * @return image url
+     */
     public String uploadImage(MultipartFile image) {
         String image_url = firebaseStorageService.upload(image);
         log.info(image_url);

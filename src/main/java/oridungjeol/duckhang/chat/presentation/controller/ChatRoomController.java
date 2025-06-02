@@ -14,6 +14,7 @@ import oridungjeol.duckhang.chat.application.dto.ChatRoom;
 import oridungjeol.duckhang.chat.application.dto.ChatRoomParticipant;
 import oridungjeol.duckhang.chat.application.service.ChatService;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequestMapping("/chat")
@@ -75,6 +76,11 @@ public class ChatRoomController {
         }
     }
 
+    /**
+     * 이미지를 firebase에 업로드 후 url을 리턴합니다.
+     * @param image
+     * @return image url
+     */
     @PostMapping("/upload/image")
     public String uploadImage(@RequestParam("image") MultipartFile image) {
         return chatService.uploadImage(image);

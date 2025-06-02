@@ -13,4 +13,7 @@ import java.util.List;
 public interface ChatESRepository extends ElasticsearchRepository<ChatDocument, Long> {
     @Query("{\"term\": {\"roomId\": ?0}}")
     Page<ChatDocument> findChatByRoomId(long roomId, Pageable pageable);
+
+    @Query("{\"term\": {\"roomId\": ?0}}")
+    List<ChatDocument> findAllByRoomId(long roomId);
 }

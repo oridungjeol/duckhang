@@ -6,6 +6,8 @@ public enum MessageType {
     IMAGE,
     PAY,
     MAP,
+    PAYRESULT,
+    WARNNING
     REFUND,
     COMPLETE_PAYMENT,
     COMPLETE_REFUNDED,
