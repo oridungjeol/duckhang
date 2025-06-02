@@ -1,5 +1,7 @@
 package oridungjeol.duckhang.board.application.port.in;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import oridungjeol.duckhang.board.presentation.dto.response.BoardListResponseDto;
 import oridungjeol.duckhang.board.presentation.dto.response.BoardResponseDto;
@@ -16,5 +18,5 @@ public interface BoardUseCase {
     void deleteBoard(UUID authorUuid, Long id);
 
     BoardResponseDto getDetailBoard(Long boardId);
-    List<BoardListResponseDto> getAllBoards(BoardType boardType);
+    Page<BoardListResponseDto> getAllBoards(BoardType boardType, int page, int size);
 }
