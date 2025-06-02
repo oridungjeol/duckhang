@@ -85,9 +85,4 @@ public class ChatRoomController {
     public String uploadImage(@RequestParam("image") MultipartFile image) {
         return chatService.uploadImage(image);
     }
-
-    @GetMapping("/fraud/{room_id}")
-    public List<String> checkFraud(@PathVariable("room_id") long room_id) throws IOException {
-        return chatService.checkFraud(room_id);
-    }
 }
