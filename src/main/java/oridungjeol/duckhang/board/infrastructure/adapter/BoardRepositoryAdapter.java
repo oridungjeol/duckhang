@@ -1,6 +1,8 @@
 package oridungjeol.duckhang.board.infrastructure.adapter;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.domain.Board;
@@ -40,10 +42,9 @@ public class BoardRepositoryAdapter implements BoardRepository {
     }
 
     @Override
-    public List<Board> findAllByBoardType(BoardType boardType) {
-        return boardJpaRepository.findAllByBoardType(boardType).stream()
-                .map(BoardEntityMapper::toDomain)
-                .toList();
+    public Page<Board> findAllByBoardType(BoardType boardType, Pageable pageable) {
+        Page<BoardEntity> boardEntities = boardJpaRepository.findAllByBoardType(boardType, pageable);
+        return boardEntities.map(BoardEntityMapper::toDomain);
     }
 
     @Override

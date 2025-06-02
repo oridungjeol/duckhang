@@ -1,5 +1,7 @@
 package oridungjeol.duckhang.board.infrastructure.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import oridungjeol.duckhang.board.infrastructure.entity.BoardEntity;
 import oridungjeol.duckhang.board.domain.BoardType;
@@ -8,6 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
-    List<BoardEntity> findAllByBoardType(BoardType boardType);
+    Page<BoardEntity> findAllByBoardType(BoardType boardType, Pageable pageable);
     List<BoardEntity> findAllByAuthorUuid(UUID authorUuid);
 }

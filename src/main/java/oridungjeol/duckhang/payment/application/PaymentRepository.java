@@ -8,4 +8,5 @@ public interface PaymentRepository {
     void save(PaymentEntity paymentEntity);
     Optional<PaymentEntity> findByOrderId(String orderId);
 
+    Optional<PaymentEntity> findByBoardId(Long boardId);
 }

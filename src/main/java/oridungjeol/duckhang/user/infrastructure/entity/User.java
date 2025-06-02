@@ -21,6 +21,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String nickname;
     private String name;
+    @Column(columnDefinition = "TEXT")
+    private String profileImageUrl;
     private String phoneNumber;
     private String address;
     private String email;

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class RentalPost {
+public class RentalPost implements PricedBoardDetail{
     private long boardId;
 
     private int price;
