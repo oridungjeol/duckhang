@@ -4,16 +4,15 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import oridungjeol.duckhang.board.application.mapper.RentalDtoMapper;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
 import oridungjeol.duckhang.board.application.port.out.BoardRepository;
 import oridungjeol.duckhang.board.application.port.out.RentalRepository;
+import oridungjeol.duckhang.board.application.port.out.UploadFilePort;
 import oridungjeol.duckhang.board.domain.Board;
 import oridungjeol.duckhang.board.domain.BoardType;
-import oridungjeol.duckhang.board.domain.PurchasePost;
 import oridungjeol.duckhang.board.domain.RentalPost;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.document.BoardDocument;
-import oridungjeol.duckhang.board.infrastructure.elasticsearch.repository.BoardDocumentRepository;
 import oridungjeol.duckhang.board.infrastructure.redis.domain.BoardEventDto;
 import oridungjeol.duckhang.board.infrastructure.redis.infrastructure.BoardStreamPublisher;
 import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventDtoMapper;
@@ -34,6 +33,7 @@ public class RentalBoardService implements BoardUseCase {
     private final BoardRepository boardRepository;
     private final RentalRepository rentalRepository;
     private final UserJpaRepository userJpaRepository;
+    private final UploadFilePort uploadFilePort;
     private final BoardStreamPublisher boardStreamPublisher;
 
     @Override
@@ -45,9 +45,14 @@ public class RentalBoardService implements BoardUseCase {
     public Long createBoard(
             UUID authorUuid,
             BoardType boardType,
-            RequestDto requestDto
+            RequestDto requestDto,
+            MultipartFile imageFile
     ) {
-        Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl(), boardType);
+        String imageUrl = null;
+        if (imageFile != null && !imageFile.isEmpty()) {
+            imageUrl = uploadFilePort.upload(imageFile);
+        }
+        Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), imageUrl, boardType);
         Board savedBoard = boardRepository.save(board);
 
         RentalPost rentalPost = new RentalPost(savedBoard.getId(), requestDto.getPrice(), requestDto.getDeposit());
@@ -87,7 +92,8 @@ public class RentalBoardService implements BoardUseCase {
     }
 
     @Override
-    public Long updateBoard(Long boardId, UUID authorUuid, RequestDto requestDto) {
+    public Long updateBoard(Long boardId, UUID authorUuid, RequestDto requestDto,
+                            MultipartFile imageFile) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
 
@@ -96,7 +102,13 @@ public class RentalBoardService implements BoardUseCase {
         RentalPost rentalPost = rentalRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
 
-        board.updateContent(requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl());
+        String imageUrl = board.getImageUrl();
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            imageUrl = uploadFilePort.upload(imageFile);
+        }
+
+        board.updateContent(requestDto.getTitle(), requestDto.getContent(), imageUrl);
         rentalPost.updatePriceAndDeposit(requestDto.getPrice(), requestDto.getDeposit());
 
         boardRepository.save(board);

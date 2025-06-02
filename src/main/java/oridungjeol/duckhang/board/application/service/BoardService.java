@@ -4,6 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import oridungjeol.duckhang.board.application.port.out.UploadFilePort;
 import oridungjeol.duckhang.board.infrastructure.redis.domain.BoardEventDto;
 import oridungjeol.duckhang.board.infrastructure.redis.infrastructure.BoardStreamPublisher;
 import oridungjeol.duckhang.board.infrastructure.redis.support.BoardEventDtoMapper;
@@ -27,6 +29,7 @@ import java.util.UUID;
 public class BoardService implements BoardUseCase {
     private final BoardRepository boardRepository;
     private final UserJpaRepository userJpaRepository;
+    private final UploadFilePort uploadFilePort;
     private final BoardStreamPublisher boardStreamPublisher;
 
     @Override
@@ -43,9 +46,16 @@ public class BoardService implements BoardUseCase {
     public Long createBoard(
             UUID authorUuid,
             BoardType boardType,
-            RequestDto requestDto
+            RequestDto requestDto,
+            MultipartFile imageFile
     ) {
-        Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl(), boardType);
+
+        String imageUrl = null;
+        if (imageFile != null && !imageFile.isEmpty()) {
+            imageUrl = uploadFilePort.upload(imageFile);
+        }
+
+        Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), imageUrl, boardType);
         Board savedBoard = boardRepository.save(board);
 
         BoardEventDto eventDto = BoardEventDtoMapper.toDto(savedBoard , BoardEventType.CREATE);
@@ -75,13 +85,19 @@ public class BoardService implements BoardUseCase {
     }
 
     @Override
-    public Long updateBoard(Long boardId, UUID authorUuid, RequestDto requestDto) {
+    public Long updateBoard(Long boardId, UUID authorUuid, RequestDto requestDto, MultipartFile imageFile) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
 
         board.validateAuthor(authorUuid);
 
-        board.updateContent(requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl());
+        String imageUrl = board.getImageUrl();
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            imageUrl = uploadFilePort.upload(imageFile);
+        }
+
+        board.updateContent(requestDto.getTitle(), requestDto.getContent(),imageUrl);
 
         boardRepository.save(board);
 

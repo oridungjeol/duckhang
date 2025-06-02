@@ -4,8 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import oridungjeol.duckhang.board.application.mapper.SellDtoMapper;
 import oridungjeol.duckhang.board.application.port.in.BoardUseCase;
+import oridungjeol.duckhang.board.application.port.out.UploadFilePort;
 import oridungjeol.duckhang.board.domain.SellPost;
 import oridungjeol.duckhang.board.infrastructure.redis.domain.BoardEventDto;
 import oridungjeol.duckhang.board.infrastructure.redis.infrastructure.BoardStreamPublisher;
@@ -31,6 +33,7 @@ public class SellBoardService implements BoardUseCase {
     private final BoardRepository boardRepository;
     private final SellRepository sellRepository;
     private final UserJpaRepository userJpaRepository;
+    private final UploadFilePort uploadFilePort;
     private final BoardStreamPublisher boardStreamPublisher;
 
     @Override
@@ -42,9 +45,14 @@ public class SellBoardService implements BoardUseCase {
     public Long createBoard(
             UUID authorUuid,
             BoardType boardType,
-            RequestDto requestDto
+            RequestDto requestDto,
+            MultipartFile imageFile
     ) {
-        Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl(), boardType);
+        String imageUrl = null;
+        if (imageFile != null && !imageFile.isEmpty()) {
+            imageUrl = uploadFilePort.upload(imageFile);
+        }
+        Board board = new Board(authorUuid, requestDto.getTitle(), requestDto.getContent(), imageUrl, boardType);
         Board savedBoard = boardRepository.save(board);
 
         SellPost sellPost = new SellPost(savedBoard.getId(), requestDto.getPrice());
@@ -89,7 +97,7 @@ public class SellBoardService implements BoardUseCase {
     }
 
     @Override
-    public Long updateBoard(Long boardId, UUID authorUuid, RequestDto requestDto) {
+    public Long updateBoard(Long boardId, UUID authorUuid, RequestDto requestDto, MultipartFile imageFile) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found"));
 
@@ -98,7 +106,13 @@ public class SellBoardService implements BoardUseCase {
         SellPost sellPost = sellRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("Sell not found"));
 
-        board.updateContent(requestDto.getTitle(), requestDto.getContent(), requestDto.getImageUrl());
+        String imageUrl = board.getImageUrl();
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            imageUrl = uploadFilePort.upload(imageFile);
+        }
+
+        board.updateContent(requestDto.getTitle(), requestDto.getContent(), imageUrl);
         sellPost.updatePrice(requestDto.getPrice());
 
         boardRepository.save(board);
