@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName="chatting_dataset")
+@Document(indexName="chatting")
 public class ChatDocument {
     @Id
     private String id;
