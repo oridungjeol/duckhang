@@ -20,8 +20,10 @@ public class Board {
     public Board(UUID authorUuid, String title, String content, String imageUrl, BoardType boardType) {
         if (title == null || title.isBlank()) throw new IllegalArgumentException("제목은 필수입니다.");
         if (content == null || content.isBlank()) throw new IllegalArgumentException("내용은 필수입니다.");
-        this.authorUuid = authorUuid;
+        if (imageUrl == null || imageUrl.isBlank()) throw new IllegalArgumentException("이미지는 필수입니다.");
+
         this.title = title;
+        this.authorUuid = authorUuid;
         this.content = content;
         this.imageUrl = imageUrl;
         this.boardType = boardType;
