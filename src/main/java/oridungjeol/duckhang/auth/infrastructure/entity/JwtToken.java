@@ -1,5 +1,6 @@
 package oridungjeol.duckhang.auth.infrastructure.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 public class JwtToken {
     @Id
     private String uuid;
+    @Column(length = 512)
     private String refreshToken;
     private LocalDateTime expiresAt;
 }
