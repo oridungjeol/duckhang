@@ -12,7 +12,6 @@ import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Repository;
 import oridungjeol.duckhang.board.search.domain.SearchBoardResultDto;
-import oridungjeol.duckhang.board.search.support.SearchFieldType;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,28 +25,17 @@ public class SearchBoardRepository {
     public Page<SearchBoardResultDto> searchBoard(
             String keyword,
             Pageable pageable,
-            Optional<BoardType> boardType,
-            SearchFieldType fieldType
+            Optional<BoardType> boardType
+            // SearchFieldType fieldType 파라미터 삭제해도 됨
     ) {
         Criteria criteria = new Criteria();
 
         if (keyword != null && !keyword.isBlank()) {
-            Criteria keywordCriteria;
-
-            switch (fieldType) {
-                case TITLE -> keywordCriteria = Criteria.where("title").matches(keyword);
-                case CONTENT -> keywordCriteria = Criteria.where("content").matches(keyword);
-                case ALL -> keywordCriteria = new Criteria()
-                        .or(Criteria.where("title").matches(keyword))
-                        .or(Criteria.where("content").matches(keyword));
-                default -> throw new IllegalArgumentException("Invalid field type");
-            }
-
-            criteria = criteria.and(keywordCriteria);
+            // 제목 검색만 수행
+            criteria = criteria.and(Criteria.where("title").matches(keyword));
         }
 
         if (boardType.isPresent()) {
-            // .keyword 필드를 명시적으로 사용하여 정확한 매칭 수행
             criteria = criteria.and(Criteria.where("boardType.keyword").is(boardType.get().name()));
         }
 

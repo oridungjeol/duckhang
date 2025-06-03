@@ -14,7 +14,6 @@ import oridungjeol.duckhang.board.search.domain.SearchBoardResultDto;
 import oridungjeol.duckhang.board.search.application.SearchBoardService;
 import oridungjeol.duckhang.board.search.support.SearchFieldType;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/board/search")
@@ -27,10 +26,10 @@ public class SearchBoardController {
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) BoardType boardType,
-            @RequestParam(defaultValue = "ALL") SearchFieldType searchFieldType
+            @RequestParam(required = false) BoardType boardType
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return searchBoardService.searchBoards(keyword, pageable, boardType, searchFieldType);
+        return searchBoardService.searchBoards(keyword, pageable, boardType);
     }
+
 }
