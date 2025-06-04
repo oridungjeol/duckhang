@@ -66,7 +66,7 @@ public class BoardController {
             @AuthenticationPrincipal CustomPrincipal principal,
             @PathVariable BoardType boardType,
             @PathVariable Long boardId,
-            @RequestBody RequestDto requestDto,
+            @RequestPart("dto") RequestDto requestDto,
             @RequestPart(value = "imageUrl", required = false) MultipartFile imageFile
     ) {
         BoardUseCase boardUseCase = boardUsecaseFactory.getBoardUseCase(boardType);

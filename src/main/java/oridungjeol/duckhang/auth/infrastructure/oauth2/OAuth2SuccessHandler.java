@@ -75,6 +75,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addCookie(uuidCookie);
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
-//        response.sendRedirect(request.getHeader("referer"));
+        response.sendRedirect("/board/deal");
     }
 }
