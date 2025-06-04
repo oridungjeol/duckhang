@@ -28,13 +28,14 @@ public class ReviewValidationService {
      * @throws IllegalArgumentException 거래가 존재하지 않거나, 리뷰 가능 조건을 만족하지 않을 경우
      */
     public void validateWritable(String orderId) {
+        // 거래 조회
         PaymentEntity payment = paymentJpaRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 거래입니다."));
-
-        if ("PAID".equals(payment.getStatus()) || "CANCELED".equals(payment.getStatus())) {
+        // "PAID" 또는 "CANCELED" 상태일 경우 리뷰 작성 가능
+        if (!"PAID".equals(payment.getStatus()) && !"CANCELED".equals(payment.getStatus())) {
             throw new IllegalArgumentException("완료된 거래에 한해서만 리뷰를 남길 수 있습니다.");
         }
-
+        // 이미 리뷰가 작성된 거래인지 확인
         if (reviewJpaRepository.existsByOrderId(orderId)) {
             throw new IllegalArgumentException("이미 리뷰를 남긴 거래입니다.");
         }

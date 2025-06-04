@@ -15,8 +15,24 @@ public class ReviewStatisticService {
 
     public double calculateAverageScope(UUID uuid, double scope) {
         ScopeSumDto scopeSum = reviewJpaRepository.findScopeSumByTargetId(uuid);
-        double sum = scopeSum.getSum() + scope;
-        double columnCnt = (double) (scopeSum.getColumnCnt() + 1);
+
+        double existingSum = 0;
+        long existingCount = 0;
+
+        if (scopeSum != null) {
+            if (scopeSum.getSum() != null) {
+                existingSum = scopeSum.getSum();
+            }
+            if (scopeSum.getColumnCnt() != null) {
+                existingCount = scopeSum.getColumnCnt();
+            }
+        }
+
+        double sum = existingSum + scope;
+        double columnCnt = existingCount + 1;
+
         return sum / columnCnt;
     }
+
+
 }

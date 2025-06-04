@@ -49,7 +49,7 @@ public class ReviewUseCase {
         Review reviewDomain = reviewFactory.createNewReview(reviewRequest, uuid);
         reviewJpaRepository.save(ReviewConverter.toEntity(reviewDomain));
 
-        double updatedAverage = reviewStatisticService.calculateAverageScope(uuid, reviewRequest.getScope());
+        double updatedAverage = reviewStatisticService.calculateAverageScope(UUID.fromString(reviewRequest.getTargetId()), reviewRequest.getScope());
         User oldUser = UserConverter.toDomain(userJpaRepository.findByUuid(uuid).get());
         User updatedUser = userFactory.renewUserScope(oldUser, updatedAverage);
         userJpaRepository.save(UserConverter.toEntity(updatedUser));

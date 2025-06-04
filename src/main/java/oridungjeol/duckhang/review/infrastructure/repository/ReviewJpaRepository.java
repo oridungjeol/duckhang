@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import oridungjeol.duckhang.review.application.dto.ScopeSumDto;
 import oridungjeol.duckhang.review.infrastructure.entity.Review;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ReviewJpaRepository extends JpaRepository<Review, Long> {

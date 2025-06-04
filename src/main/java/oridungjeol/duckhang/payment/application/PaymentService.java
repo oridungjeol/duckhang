@@ -71,6 +71,7 @@ public class PaymentService {
 
         PaymentEntity payment = paymentAdapter.findByOrderId(dto.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("주문 없음"));
+        System.out.println(payment);
 
         if ("PAID".equalsIgnoreCase(payment.getStatus())) {
             throw new IllegalStateException("이미 결제 완료된 주문입니다.");
