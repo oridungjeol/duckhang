@@ -11,4 +11,5 @@ public enum MessageType {
     REFUND,
     COMPLETE_PAYMENT,
     COMPLETE_REFUNDED,
+    REVIEW
 }
