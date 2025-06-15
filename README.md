@@ -43,89 +43,68 @@
 
 ### 🔐 로그인, 회원가입
 
-<div style="text-align: center;">
-<img width="796" src="images/login-select.png" alt="login select">
+<div style="text-align: left;">
+<img height="340" src="images/login-select.png" alt="login select"><br/>
 소셜 로그인 기능
 </div>
 
----
-
 ### 📝 게시글 업로드
 
-<div style="text-align: center;">
-<img width="796" src="images/deal-board.png" alt="deal board">
-<img width="796" src="images/deal-board-detail.png" alt="deal board detail">
-<br/>
+<div style="text-align: left;">
+<img height="340" src="images/deal-board.png" alt="deal board">
+<img height="340" src="images/deal-board-detail.png" alt="deal board detail"><br/>
 게시글 등록 및 상세 조회 기능
 </div>
 
----
 
 ### 🔍 물품 검색
 
-<div style="text-align: center;">
-<img width="796" src="images/search.png" alt="search">
-<img width="796" src="images/search-result.png" alt="search result">
-<br/>
+<div style="text-align: left;">
+<img height="340" src="images/search.png" alt="search">
+<img height="340" src="images/search-result.png" alt="search result"><br/>
 게시글 제목 기반 검색 기능
 </div>
 
----
-
 ### 💳 TOSS 결제 연동
 
-<div style="text-align: center;">
-<img width="796" src="images/payment-in-chatroom.png" alt="payment in chatroom">
-<img width="796" src="images/payment-choosing-method.png" alt="payment choosing method">
-<img width="796" src="images/paying-with-toss.png" alt="paying with toss">
-<img width="796" src="images/success-paying.png" alt="success paying">
-<br/>
+<div style="text-align: left;">
+<img height="340" src="images/payment-in-chatroom.png" alt="payment in chatroom">
+<img height="340" src="images/payment-choosing-method.png" alt="payment choosing method">
+<img height="340" src="images/paying-with-toss.png" alt="paying with toss">
+<img height="340" src="images/success-paying.png" alt="success paying"><br/>
 채팅방 내 실시간 TOSS 결제 기능
 </div>
 
----
-
 ### 💬 실시간 채팅
 
-<div style="text-align: center;">
-<img width="796" src="images/chatting.png" alt="chatting">
-<img width="796" src="images/chatroom.png" alt="chatroom">
-<br/>
+<div style="text-align: left;">
+<img height="340" src="images/chatting.png" alt="chatting">
+<img height="340" src="images/chatroom.png" alt="chatroom"><br/>
 1:1 실시간 채팅 기능 (WebSocket 기반)
 </div>
 
----
-
 ### 🗺️ 위치 공유
 
-<div style="text-align: center;">
-<img width="796" src="images/asking-map.png" alt="asking map">
-<img width="796" src="images/sharing-location.png" alt="sharing location">
-<br/>
+<div style="text-align: left;">
+<img height="340" src="images/asking-map.png" alt="asking map">
+<img height="340" src="images/sharing-location.png" alt="sharing location"><br/>
 실시간 위치 공유 기능 (Kakao 지도 API)
 </div>
 
----
-
 ### 🌟 리뷰 작성
 
-<div style="text-align: center;">
-<img width="796" src="images/review-creating.png" alt="review creating">
-<br/>
+<div style="text-align: left;">
+<img height="340" src="images/review-creating.png" alt="review creating"><br/>
 거래 완료 후 리뷰 작성 기능
 </div>
 
----
+### 👤 프로필 관리
 
-### 프로필 관리
-
-<div style="text-align: center;">
-<img width="796" src="images/showing-profile-with-posts.png" alt="showing profile with posts">
-<img width="796" src="images/showing-profile-with-reviews.png" alt="showing profile with reviews">
-<br/>
+<div style="text-align: left;">
+<img height="340" src="images/showing-profile-with-posts.png" alt="showing profile with posts">
+<img height="340" src="images/showing-profile-with-reviews.png" alt="showing profile with reviews"><br/>
 사용자 프로필, 게시글 및 리뷰 관리 기능
 </div>
-
 
 ---
 
