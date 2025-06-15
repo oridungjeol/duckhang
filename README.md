@@ -1,16 +1,12 @@
 # 🐥 덕행
 > 굿즈 관리부터 커뮤니티까지 덕질은 **덕행** 하나로.
 
----
-
 ## 📣 프로젝트 소개
 
 **덕행(Dukhaeng)** 은 팬 활동에 필요한 모든 기능을 하나의 서비스로 통합한 올인원 플랫폼입니다.
 굿즈 거래, 커뮤니티 등 팬덤 문화 속 다양한 니즈를 충족하여 팬 문화의 활성화를 목표로 합니다.
 
 **📍 프론트 코드는 [여기](https://github.com/oridungjeol/duckhang-front)서 확인하실 수 있습니다.**
-
----
 
 ## 👩‍💻 팀원 소개
 
@@ -21,8 +17,6 @@
 | 🐹 윤채민 | [윤채민의 GitHub](https://github.com/cinnamein) |
 | 🐨 전유영 | [전유영의 GitHub](https://github.com/Azamman327) |
 
-
----
 
 ## 🌟 서비스 기능
 
@@ -37,9 +31,7 @@
 | 👤 **프로필 관리** | 사용자 정보, 거래글, 리뷰를 확인할 수 있는 페이지 | 윤채민 |
 | 🗺️ **위치 공유** | 직거래를 위한 위치 정보 지도 공유 기능 제공 | 전유영 |
 
----
-
-## 🎥 미리보기 (스크린샷 or GIF)
+## 🎥 미리보기
 
 ### 🔐 로그인, 회원가입
 
@@ -106,22 +98,15 @@
 사용자 프로필, 게시글 및 리뷰 관리 기능
 </div>
 
----
-
 ## 🛠 기술 스택
 
 | 구분 | 사용 기술 |
 | - | - |
-| **Backend** | Spring Boot, Java, Spring Security, WebSocket, Firebase |
+| **Backend** | Spring Boot, Java, WebSocket |
 | **Frontend** | React, JavaScript |
-| **Database** | MySQL, Redis |
-| **Search & Logging** | Elasticsearch, Kibana |
-| **Infra / DevOps** | Docker, Nginx |
-| **API 연동** | TOSS 결제 API, Kakao 소셜 로그인, Kakao Maps API |
+| **Database** | MySQL, Redis, Elasticsearch |
+| **Infra / DevOps** | Docker, Nginx, Firebase Storage |
+| **API** | TOSS 결제 API, Kakao 소셜 로그인, Kakao Maps API |
 
----
-
-## 시스템 아키텍처
+## 🏗️ 시스템 아키텍처
 ![system architecture](images/system-architecture.png)
-
----
